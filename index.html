@@ -342,6 +342,135 @@
             transform: translateY(0);
         }
 
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            color: var(--gray);
+            font-size: 1.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--dark);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .standards-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .standards-list li {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .standards-list li:hover {
+            background-color: #e9ecef;
+        }
+
+        .standards-list .document-icon {
+            margin-right: 0.8rem;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .standards-category {
+            margin: 1.5rem 0 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -351,6 +480,10 @@
             }
             .hero-buttons {
                 flex-direction: column;
+            }
+            .modal-content {
+                margin: 10% auto;
+                width: 90%;
             }
         }
     </style>
@@ -362,7 +495,7 @@
                 <h1>Pdflyx Bot</h1>
                 <p class="tagline">Умный строительный помощник на основе российских нормативов</p>
                 <div class="hero-buttons">
-                    <a href="https://t.me/YourPdflyxBot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
+                    <a href="https://t.me/Pdflyx_bot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
                     <a href="#features" class="btn btn-outline">Узнать больше</a>
                 </div>
             </div>
@@ -376,10 +509,11 @@
                 <p>Строительный бот Pdflyx - ваш надежный помощник, который отвечает на вопросы по проектированию и строительству, опираясь на действующие российские нормативы.</p>
 
                 <div class="features">
-                    <div class="feature">
+                    <div class="feature standards-feature">
                         <div class="feature-icon"><i class="fas fa-book"></i></div>
                         <h3>Нормативная база</h3>
                         <p>Доступ к актуальным строительным нормам, правилам и стандартам РФ</p>
+                        <a href="#" class="btn btn-primary btn-sm show-standards" style="margin-top: 1rem; font-size: 0.9rem; padding: 0.5rem 1rem;">Посмотреть список</a>
                     </div>
                     <div class="feature">
                         <div class="feature-icon"><i class="fas fa-search"></i></div>
@@ -434,6 +568,28 @@
         </div>
     </main>
 
+    <!-- Модальное окно для списка нормативных документов -->
+    <div id="standardsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <h2>Нормативная база</h2>
+                <p>Бот работает с актуальными российскими строительными нормативами:</p>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Поиск по нормативам...">
+            </div>
+            <div class="modal-body">
+                <div id="standardsList" class="standards-list-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        <p>Загрузка списка нормативов...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -472,6 +628,141 @@
 
             // Проверка при прокрутке
             window.addEventListener('scroll', checkFade);
+
+            // Модальное окно для стандартов
+            const modal = document.getElementById('standardsModal');
+            const standardsBtn = document.querySelector('.show-standards');
+            const closeBtn = document.querySelector('.close');
+            const searchInput = document.querySelector('.search-input');
+
+            // Открытие модального окна
+            standardsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                modal.style.display = 'block';
+                loadStandards();
+            });
+
+            // Закрытие модального окна
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            // Закрытие при клике вне модального окна
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Фильтрация списка стандартов
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const items = document.querySelectorAll('.standards-list li');
+
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Показываем/скрываем заголовки категорий
+                const categories = document.querySelectorAll('.standards-category');
+                categories.forEach(category => {
+                    const categoryName = category.textContent.toLowerCase();
+                    const categoryItems = category.nextElementSibling.querySelectorAll('li');
+                    let hasVisibleItems = false;
+
+                    categoryItems.forEach(item => {
+                        if (item.style.display !== 'none') {
+                            hasVisibleItems = true;
+                        }
+                    });
+
+                    category.style.display = hasVisibleItems ? 'block' : 'none';
+                });
+            });
+
+            // Функция загрузки списка стандартов
+            function loadStandards() {
+                const standardsList = document.getElementById('standardsList');
+
+                // Имитация загрузки данных
+                setTimeout(() => {
+                    // Тестовый набор данных
+                    const standardsCategories = {
+                        "СП (Своды правил)": [
+                            "СП 20.13330.2016 - Нагрузки и воздействия",
+                            "СП 22.13330.2016 - Основания зданий и сооружений",
+                            "СП 24.13330.2011 - Свайные фундаменты",
+                            "СП 14.13330.2018 - Строительство в сейсмических районах",
+                            "СП 63.13330.2018 - Бетонные и железобетонные конструкции",
+                            "СП 16.13330.2017 - Стальные конструкции",
+                            "СП 64.13330.2017 - Деревянные конструкции",
+                            "СП 50.13330.2012 - Тепловая защита зданий"
+                        ],
+                        "ГОСТ": [
+                            "ГОСТ 27751-2014 - Надежность строительных конструкций и оснований",
+                            "ГОСТ 31937-2011 - Здания и сооружения. Правила обследования и мониторинга",
+                            "ГОСТ 21.501-2018 - Правила выполнения рабочей документации",
+                            "ГОСТ 2.105-95 - Общие требования к текстовым документам"
+                        ],
+                        "СНиП": [
+                            "СНиП 12-03-2001 - Безопасность труда в строительстве. Часть 1",
+                            "СНиП 12-04-2002 - Безопасность труда в строительстве. Часть 2"
+                        ],
+                        "ФЗ и Постановления": [
+                            "ФЗ №384 - Технический регламент о безопасности зданий и сооружений",
+                            "ФЗ №123 - Технический регламент о требованиях пожарной безопасности",
+                            "Постановление Правительства РФ №87 - О составе разделов проектной документации"
+                        ]
+                    };
+
+                    // Очищаем содержимое
+                    standardsList.innerHTML = '';
+
+                    // Создаем список по категориям
+                    for (const category in standardsCategories) {
+                        const categoryHeading = document.createElement('h3');
+                        categoryHeading.textContent = category;
+                        categoryHeading.className = 'standards-category';
+                        standardsList.appendChild(categoryHeading);
+
+                        const categoryList = document.createElement('ul');
+                        categoryList.className = 'standards-list';
+
+                        standardsCategories[category].forEach(standard => {
+                            const listItem = document.createElement('li');
+
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-file-pdf document-icon';
+                            listItem.appendChild(icon);
+
+                            const text = document.createTextNode(standard);
+                            listItem.appendChild(text);
+
+                            categoryList.appendChild(listItem);
+                        });
+
+                        standardsList.appendChild(categoryList);
+                    }
+
+                    // В реальной реализации здесь был бы код для загрузки данных с сервера
+                    // например, с использованием fetch API:
+                    /*
+                    fetch('/api/standards')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Обработка полученных данных
+                        })
+                        .catch(error => {
+                            standardsList.innerHTML = '<p>Ошибка загрузки данных: ' + error.message + '</p>';
+                        });
+                    */
+                }, 1000);
+            }
         });
     </script>
 </body>
