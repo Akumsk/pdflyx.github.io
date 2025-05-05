@@ -184,22 +184,56 @@
             margin-bottom: 1rem;
         }
 
+        .price-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 0 auto;
+        }
+
         .price-card {
             background: white;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             text-align: center;
-            max-width: 400px;
-            margin: 0 auto;
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .price-card:hover {
-            transform: scale(1.03);
+            transform: translateY(-10px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-card-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-bottom-left-radius: 10px;
+        }
+
+        .price-card.highlighted {
+            border: 2px solid var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .price-card.highlighted:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+
+        .price-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
         }
 
         .price-card::before {
@@ -229,6 +263,7 @@
             list-style: none;
             margin: 2rem 0;
             text-align: left;
+            flex-grow: 1;
         }
 
         .price-features li {
@@ -242,6 +277,18 @@
             color: var(--secondary);
             position: absolute;
             left: 0;
+        }
+
+        .btn-outline-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: rgba(0, 119, 204, 0.1);
+            transform: translateY(-3px);
         }
 
         .how-it-works {
@@ -530,17 +577,48 @@
 
             <section class="section fade-in">
                 <h2>Подписка</h2>
-                <div class="price-card">
-                    <h3>Профессиональный доступ</h3>
-                    <div class="price">1000 ₽ <small>/месяц</small></div>
-                    <ul class="price-features">
-                        <li>Неограниченное количество запросов</li>
-                        <li>Полный доступ к нормативной базе</li>
-                        <li>Ответы с цитированием источников</li>
-                        <li>Техническая поддержка</li>
-                        <li>Регулярные обновления базы знаний</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary">Оформить подписку</a>
+                <div class="price-plans">
+                    <div class="price-card">
+                        <h3>Бесплатный доступ</h3>
+                        <div class="price">0 ₽</div>
+                        <ul class="price-features">
+                            <li>Не более 5 запросов в день</li>
+                            <li>Лимит 30 запросов в месяц</li>
+                            <li>Базовые ответы с цитированием источников</li>
+                            <li>Регулярные обновления базы знаний</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-secondary">Начать бесплатно</a>
+                    </div>
+
+                    <div class="price-card highlighted">
+                        <div class="price-card-badge">Популярный</div>
+                        <h3>Стандартный план</h3>
+                        <div class="price">1000 ₽ <small>/месяц</small></div>
+                        <ul class="price-features">
+                            <li>Неограниченное количество запросов в день</li>
+                            <li>Лимит 200 запросов в месяц</li>
+                            <li>Полный доступ к нормативной базе</li>
+                            <li>Развёрнутые ответы с цитированием источников</li>
+                            <li>Техническая поддержка</li>
+                            <li>Добавление стандартов по запросу</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">Оформить подписку</a>
+                    </div>
+
+                    <div class="price-card">
+                        <h3>Премиум план</h3>
+                        <div class="price">2000 ₽ <small>/месяц</small></div>
+                        <ul class="price-features">
+                            <li>Неограниченное количество запросов в день</li>
+                            <li>Лимит 500 запросов в месяц</li>
+                            <li>Полный доступ к нормативной базе</li>
+                            <li>Просмотр стандартов с выделенными цитатами</li>
+                            <li>Приоритетная техническая поддержка</li>
+                            <li>Добавление стандартов по запросу</li>
+                            <li>Расширенная статистика использования</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">Оформить премиум</a>
+                    </div>
                 </div>
             </section>
 
