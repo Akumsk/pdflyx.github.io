@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pdflyx Bot — строительный Telegram-бот</title>
+    <title>Список нормативных документов - Pdflyx Bot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +40,7 @@
         header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 3rem 0;
+            padding: 2rem 0;
             position: relative;
             overflow: hidden;
         }
@@ -63,7 +63,7 @@
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 0.5rem;
             animation: fadeInDown 1s ease;
         }
@@ -75,12 +75,45 @@
             animation: fadeIn 1s ease 0.3s both;
         }
 
-        .hero-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            animation: fadeIn 1s ease 0.6s both;
+        main {
+            padding: 3rem 0;
+        }
+
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 3px;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        h2:hover::after {
+            width: 100%;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            margin: 2rem 0 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
         }
 
         .btn {
@@ -109,224 +142,21 @@
 
         .btn-outline {
             background: transparent;
-            color: white;
-            border: 2px solid white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
 
         .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-        }
-
-        main {
-            padding: 4rem 0;
-        }
-
-        .section {
-            margin-bottom: 4rem;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
-
-        .section:hover {
-            transform: translateY(-5px);
-        }
-
-        h2 {
-            color: var(--primary-dark);
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -5px;
-            width: 50px;
-            height: 3px;
-            background: var(--secondary);
-            transition: width 0.3s ease;
-        }
-
-        .section:hover h2::after {
-            width: 100%;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature {
-            text-align: center;
-            padding: 1.5rem;
-            border-radius: 8px;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .feature:hover {
-            background: white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .price-plans {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 0 auto;
-        }
-
-        .price-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .price-card-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--secondary);
-            color: white;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-bottom-left-radius: 10px;
-        }
-
-        .price-card.highlighted {
-            border: 2px solid var(--secondary);
-            transform: scale(1.05);
-        }
-
-        .price-card.highlighted:hover {
-            transform: translateY(-10px) scale(1.05);
-        }
-
-        .price-card h3 {
-            margin-bottom: 1rem;
-            color: var(--primary-dark);
-        }
-
-        .price-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
-        .price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin: 1.5rem 0;
-        }
-
-        .price small {
-            font-size: 1rem;
-            font-weight: 400;
-            color: var(--gray);
-        }
-
-        .price-features {
-            list-style: none;
-            margin: 2rem 0;
-            text-align: left;
-            flex-grow: 1;
-        }
-
-        .price-features li {
-            margin-bottom: 0.8rem;
-            position: relative;
-            padding-left: 1.5rem;
-        }
-
-        .price-features li::before {
-            content: '✓';
-            color: var(--secondary);
-            position: absolute;
-            left: 0;
-        }
-
-        .btn-outline-secondary {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-secondary:hover {
             background: rgba(0, 119, 204, 0.1);
             transform: translateY(-3px);
-        }
-
-        .how-it-works {
-            position: relative;
-        }
-
-        .steps {
-            counter-reset: step;
-        }
-
-        .step {
-            padding-left: 3rem;
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        .step::before {
-            counter-increment: step;
-            content: counter(step);
-            position: absolute;
-            left: 0;
-            top: 0;
-            background: var(--primary);
-            color: white;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
         }
 
         footer {
             background: var(--dark);
             color: white;
-            padding: 3rem 0;
+            padding: 2rem 0;
             text-align: center;
+            margin-top: 3rem;
         }
 
         .footer-content {
@@ -357,141 +187,7 @@
             transform: translateY(-3px);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Анимация для секций при прокрутке */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Стили для модального окна */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow: auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            position: relative;
-            animation: modalFadeIn 0.3s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .close {
-            position: absolute;
-            right: 1.5rem;
-            top: 1rem;
-            color: var(--gray);
-            font-size: 1.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close:hover {
-            color: var(--dark);
-        }
-
-        .modal-header {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .modal-body {
-            margin-bottom: 1.5rem;
-        }
-
-        .standards-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .standards-list li {
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            transition: all 0.2s ease;
-        }
-
-        .standards-list li:hover {
-            background-color: #e9ecef;
-        }
-
-        .standards-list .document-icon {
-            margin-right: 0.8rem;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray);
-        }
-
-        .loading i {
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        /* Стили для таблицы стандартов */
         .search-container {
             margin-bottom: 1.5rem;
         }
@@ -518,19 +214,172 @@
             font-weight: 600;
         }
 
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .standards-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .standards-table th {
+            background-color: #f5f5f5;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f5f5f5;
+        }
+
+        .standards-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .standards-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .standard-status {
+            display: inline-block;
+            font-size: 0.85em;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .status-active {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+
+        .status-inactive {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+
+        .status-other {
+            background-color: #fcf8e3;
+            color: #8a6d3b;
+        }
+
+        .standard-number {
+            font-family: monospace;
+            white-space: nowrap;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .category-header h3 {
+            margin: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .category-count {
+            font-size: 0.9rem;
+            background-color: #eee;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            color: var(--gray);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link i {
+            margin-right: 5px;
+        }
+
+        .back-link:hover {
+            transform: translateX(-3px);
+        }
+
+        #totalCount {
+            background-color: #eee;
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Анимация для элементов при загрузке */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
             }
-            .features {
-                grid-template-columns: 1fr;
+            .content {
+                padding: 1.5rem;
             }
-            .hero-buttons {
-                flex-direction: column;
-            }
-            .modal-content {
-                margin: 10% auto;
-                width: 90%;
+            .standards-table th,
+            .standards-table td {
+                padding: 5px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -539,126 +388,26 @@
     <header>
         <div class="container">
             <div class="header-content">
-        <h1>Pdflyx Bot</h1>
-                <p class="tagline">Умный строительный помощник на основе российских нормативов</p>
-                <div class="hero-buttons">
-                    <a href="https://t.me/Pdflyx_bot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
-                    <a href="#features" class="btn btn-outline">Узнать больше</a>
-                </div>
+                <h1>Нормативные документы</h1>
+                <p class="tagline">База стандартов и нормативов, используемых в Pdflyx Bot</p>
             </div>
         </div>
     </header>
 
     <main>
         <div class="container">
-            <section id="features" class="section fade-in">
-                <h2>Возможности бота</h2>
-                <p>Строительный бот Pdflyx - ваш надежный помощник, который отвечает на вопросы по проектированию и строительству, опираясь на действующие российские нормативы.</p>
+            <div class="content fade-in">
+                <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Вернуться на главную</a>
 
-                <div class="features">
-                    <div class="feature standards-feature">
-                        <div class="feature-icon"><i class="fas fa-book"></i></div>
-                        <h3>Нормативная база</h3>
-                        <p>Доступ к актуальным строительным нормам, правилам и стандартам РФ</p>
-                        <a href="standards.html" class="btn btn-primary btn-sm" style="margin-top: 1rem; font-size: 0.9rem; padding: 0.5rem 1rem;">Посмотреть список</a>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon"><i class="fas fa-search"></i></div>
-                        <h3>Экспертные ответы</h3>
-                        <p>Задайте интересующий вопрос на строительную или проектную тематику, и бот подготовит развёрнутый ответ</p>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon"><i class="fas fa-quote-right"></i></div>
-                        <h3>Цитаты из стандартов</h3>
-                        <p>Бот предоставляет точные выдержки из нормативных документов для обоснования и подтверждения своего ответа</p>
-                    </div>
+                <h2>Список нормативных документов</h2>
+                <p>Полный список стандартов и нормативов, используемых в системе Pdflyx Bot.</p>
+
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Поиск по нормативам...">
                 </div>
-            </section>
 
-            <section class="section fade-in">
-                <h2>Подписка</h2>
-                <div class="price-plans">
-                    <div class="price-card">
-                        <h3>Бесплатный доступ</h3>
-                        <div class="price">0 ₽</div>
-                        <ul class="price-features">
-                            <li>Не более 5 запросов в день</li>
-                            <li>Лимит 30 запросов в месяц</li>
-                            <li>Базовые ответы с цитированием источников</li>
-                            <li>Регулярные обновления базы знаний</li>
-                        </ul>
-                        <a href="https://t.me/Pdflyx_bot" class="btn btn-outline-secondary">Начать бесплатно</a>
-                    </div>
+                <div id="totalCount"></div>
 
-                    <div class="price-card highlighted">
-                        <div class="price-card-badge">Популярный</div>
-                        <h3>Стандартный план</h3>
-                        <div class="price">1000 ₽ <small>/месяц</small></div>
-                        <ul class="price-features">
-                            <li>Неограниченное количество запросов в день</li>
-                            <li>Лимит 200 запросов в месяц</li>
-                            <li>Полный доступ к нормативной базе</li>
-                            <li>Развёрнутые ответы с цитированием источников</li>
-                            <li>Техническая поддержка</li>
-                            <li>Добавление стандартов по запросу</li>
-                        </ul>
-                        <a href="#" class="btn btn-primary">Оформить подписку</a>
-        </div>
-
-                    <div class="price-card">
-                        <h3>Премиум план</h3>
-                        <div class="price">2000 ₽ <small>/месяц</small></div>
-                        <ul class="price-features">
-                            <li>Неограниченное количество запросов в день</li>
-                            <li>Лимит 500 запросов в месяц</li>
-                            <li>Полный доступ к нормативной базе</li>
-                            <li>Просмотр стандартов с выделенными цитатами</li>
-                            <li>Приоритетная техническая поддержка</li>
-                            <li>Добавление стандартов по запросу</li>
-                            <li>Расширенная статистика использования</li>
-            </ul>
-                        <a href="#" class="btn btn-primary">Оформить премиум</a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section how-it-works fade-in">
-                <h2>Как это работает</h2>
-                <div class="steps">
-                    <div class="step">
-                        <h3>Оплатите подписку</h3>
-                        <p>Выберите удобный способ оплаты и оформите подписку онлайн</p>
-                    </div>
-                    <div class="step">
-                        <h3>Получите доступ к боту</h3>
-                        <p>Подписка активируется автоматически, и вы получаете доступ к боту в Telegram</p>
-                    </div>
-                    <div class="step">
-                        <h3>Задавайте вопросы</h3>
-                        <p>Просто задайте вопрос по проектированию или строительству в чате с ботом</p>
-                    </div>
-                    <div class="step">
-                        <h3>Получайте точные ответы</h3>
-                        <p>Бот найдет информацию в нормативных документах и предоставит вам точный ответ с источником</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Модальное окно для списка нормативных документов -->
-    <div id="standardsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="modal-header">
-                <h2>Нормативная база</h2>
-                <p>Бот работает с актуальными российскими строительными нормативами:</p>
-                <a href="standards.html" class="btn btn-outline-secondary" style="margin-top: 10px;">Открыть полный список в отдельной странице</a>
-            </div>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Поиск по нормативам...">
-            </div>
-            <div class="modal-body">
                 <div id="standardsList" class="standards-list-container">
                     <div class="loading">
                         <i class="fas fa-spinner"></i>
@@ -667,28 +416,28 @@
                 </div>
             </div>
         </div>
-        </div>
+    </main>
 
-        <footer>
+    <footer>
         <div class="container">
             <div class="footer-content">
-                <img src="https://via.placeholder.com/150x50?text=Pdflyx" alt="Pdflyx Logo">
                 <div class="social-links">
                     <a href="#"><i class="fab fa-telegram"></i></a>
                     <a href="#"><i class="fab fa-whatsapp"></i></a>
                     <a href="#"><i class="far fa-envelope"></i></a>
                 </div>
                 <div class="legal">
+                    <p>© 2025 Pdflyx Bot. Все права защищены.</p>
                     <p>ИП Кумсков А.Г. · ИНН 343516882161 · support@pdflyx.com</p>
                     <p><a href="terms.html" style="color: white; text-decoration: underline;">Пользовательское соглашение</a></p>
                 </div>
             </div>
         </div>
-        </footer>
+    </footer>
 
     <script>
-        // Анимация появления секций при прокрутке
         document.addEventListener('DOMContentLoaded', function() {
+            // Анимация появления элементов
             const fadeElements = document.querySelectorAll('.fade-in');
 
             function checkFade() {
@@ -708,36 +457,13 @@
             // Проверка при прокрутке
             window.addEventListener('scroll', checkFade);
 
-            // Модальное окно для стандартов
-            const modal = document.getElementById('standardsModal');
-            const standardsBtn = document.querySelector('.show-standards');
-            const closeBtn = document.querySelector('.close');
-            const searchInput = document.querySelector('.search-input');
+            // Поиск по стандартам
+            const searchInput = document.getElementById('searchInput');
 
-            // Открытие модального окна
-            standardsBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                modal.style.display = 'block';
-                loadStandards();
-            });
-
-            // Закрытие модального окна
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-
-            // Закрытие при клике вне модального окна
-            window.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            // Фильтрация списка стандартов
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
 
-                // Поиск по строкам таблицы вместо элементов списка
+                // Поиск по строкам таблицы
                 const tables = document.querySelectorAll('.standards-table');
 
                 tables.forEach(table => {
@@ -771,13 +497,13 @@
                 });
 
                 // Показываем/скрываем заголовки категорий
-                const categories = document.querySelectorAll('.standards-category');
-                categories.forEach(category => {
+                const categoryHeaders = document.querySelectorAll('.category-header');
+                categoryHeaders.forEach(header => {
                     // Категория и следующая за ней таблица
-                    const nextTable = category.nextElementSibling;
+                    const nextTable = header.nextElementSibling;
                     if (nextTable && nextTable.classList.contains('standards-table')) {
                         // Показываем заголовок категории только если таблица видима
-                        category.style.display = nextTable.style.display === 'none' ? 'none' : '';
+                        header.style.display = nextTable.style.display === 'none' ? 'none' : '';
                     }
                 });
 
@@ -806,7 +532,21 @@
                 } else if (noResultsMessage) {
                     noResultsMessage.style.display = 'none';
                 }
+
+                // Обновляем счетчик всего количества видимых документов
+                updateTotalCount();
             });
+
+            // Функция для обновления общего счетчика
+            function updateTotalCount() {
+                const totalCountElement = document.getElementById('totalCount');
+                const visibleRows = document.querySelectorAll('.standards-table tbody tr:not([style*="display: none"])');
+
+                totalCountElement.textContent = `Всего найдено: ${visibleRows.length} документов`;
+            }
+
+            // Запускаем загрузку стандартов при загрузке страницы
+            loadStandards();
 
             // Функция загрузки списка стандартов
             function loadStandards() {
@@ -908,66 +648,36 @@
                             return;
                         }
 
-                        // Добавляем стили для таблицы стандартов
-                        const styleEl = document.createElement('style');
-                        styleEl.textContent = `
-                            .standards-table {
-                                width: 100%;
-                                border-collapse: collapse;
-                                margin-bottom: 20px;
-                            }
-                            .standards-table th {
-                                background-color: #f5f5f5;
-                                padding: 10px;
-                                text-align: left;
-                                font-weight: 600;
-                                border-bottom: 2px solid #ddd;
-                            }
-                            .standards-table td {
-                                padding: 8px 10px;
-                                border-bottom: 1px solid #eee;
-                                vertical-align: middle;
-                            }
-                            .standards-table tr:hover {
-                                background-color: #f9f9f9;
-                            }
-                            .standard-status {
-                                display: inline-block;
-                                font-size: 0.85em;
-                                padding: 2px 6px;
-                                border-radius: 3px;
-                                text-align: center;
-                                min-width: 100px;
-                            }
-                            .status-active {
-                                background-color: #dff0d8;
-                                color: #3c763d;
-                            }
-                            .status-inactive {
-                                background-color: #f2dede;
-                                color: #a94442;
-                            }
-                            .status-other {
-                                background-color: #fcf8e3;
-                                color: #8a6d3b;
-                            }
-                            .standard-number {
-                                font-family: monospace;
-                                white-space: nowrap;
-                            }
-                        `;
-                        document.head.appendChild(styleEl);
+                        // Подсчитываем общее количество документов
+                        let totalDocuments = 0;
+                        for (const category in standardsCategories) {
+                            totalDocuments += standardsCategories[category].length;
+                        }
+
+                        // Отображаем общее количество
+                        const totalCountElement = document.getElementById('totalCount');
+                        totalCountElement.textContent = `Всего найдено: ${totalDocuments} документов`;
 
                         // Создаем список по категориям
                         for (const category in standardsCategories) {
                             if (standardsCategories[category].length === 0) continue;
 
+                            // Создаем заголовок категории с количеством документов
+                            const categoryHeader = document.createElement('div');
+                            categoryHeader.className = 'category-header';
+
                             const categoryHeading = document.createElement('h3');
                             categoryHeading.textContent = category;
-                            categoryHeading.className = 'standards-category';
-                            standardsList.appendChild(categoryHeading);
+                            categoryHeader.appendChild(categoryHeading);
 
-                            // Создаем таблицу вместо списка
+                            const categoryCount = document.createElement('span');
+                            categoryCount.className = 'category-count';
+                            categoryCount.textContent = `${standardsCategories[category].length} документов`;
+                            categoryHeader.appendChild(categoryCount);
+
+                            standardsList.appendChild(categoryHeader);
+
+                            // Создаем таблицу
                             const table = document.createElement('table');
                             table.className = 'standards-table';
 
