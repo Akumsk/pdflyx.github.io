@@ -803,24 +803,39 @@
                                         }
 
                                         // Добавляем стандарты из файла в соответствующую категорию
-                                        // Предполагаем, что каждый файл содержит массив стандартов
+                                        // Извлекаем только необходимые поля для отображения
                                         if (Array.isArray(data)) {
                                             data.forEach(standard => {
-                                                // Предполагаем, что каждый стандарт имеет поле name или title
-                                                const standardName = standard.name || standard.title || standard.code || JSON.stringify(standard);
+                                                // Формируем стандартизированное название
+                                                const typePart = standard.document_type || '';
+                                                const numberPart = standard.number || '';
+                                                const namePart = standard.full_name || '';
+                                                const statusPart = standard.status || '';
+
+                                                // Создаем полное название в формате: "Тип Номер Название (Статус)"
+                                                let standardName = '';
+                                                if (typePart) standardName += typePart + ' ';
+                                                if (numberPart) standardName += numberPart + ' ';
+                                                if (namePart) standardName += namePart;
+                                                if (statusPart) standardName += ` (${statusPart})`;
+
                                                 standardsCategories[categoryName].push(standardName);
                                             });
-                                        } else if (typeof data === 'object') {
-                                            // Если файл содержит объект с категориями
-                                            Object.keys(data).forEach(key => {
-                                                const standardItems = data[key];
-                                                if (Array.isArray(standardItems)) {
-                                                    standardItems.forEach(item => {
-                                                        const standardName = item.name || item.title || item.code || JSON.stringify(item);
-                                                        standardsCategories[categoryName].push(standardName);
-                                                    });
-                                                }
-                                            });
+                                        } else if (typeof data === 'object' && !Array.isArray(data)) {
+                                            // Если это один документ, не массив
+                                            const typePart = data.document_type || '';
+                                            const numberPart = data.number || '';
+                                            const namePart = data.full_name || '';
+                                            const statusPart = data.status || '';
+
+                                            // Создаем полное название в формате: "Тип Номер Название (Статус)"
+                                            let standardName = '';
+                                            if (typePart) standardName += typePart + ' ';
+                                            if (numberPart) standardName += numberPart + ' ';
+                                            if (namePart) standardName += namePart;
+                                            if (statusPart) standardName += ` (${statusPart})`;
+
+                                            standardsCategories[categoryName].push(standardName);
                                         }
                                     })
                             )
