@@ -539,7 +539,7 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <h1>Pdflyx Bot</h1>
+        <h1>Pdflyx Bot</h1>
                 <p class="tagline">Умный строительный помощник на основе российских нормативов</p>
                 <div class="hero-buttons">
                     <a href="https://t.me/Pdflyx_bot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
@@ -603,7 +603,7 @@
                             <li>Добавление стандартов по запросу</li>
                         </ul>
                         <a href="#" class="btn btn-primary">Оформить подписку</a>
-                    </div>
+        </div>
 
                     <div class="price-card">
                         <h3>Премиум план</h3>
@@ -616,7 +616,7 @@
                             <li>Приоритетная техническая поддержка</li>
                             <li>Добавление стандартов по запросу</li>
                             <li>Расширенная статистика использования</li>
-                        </ul>
+            </ul>
                         <a href="#" class="btn btn-primary">Оформить премиум</a>
                     </div>
                 </div>
@@ -666,9 +666,9 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
-    <footer>
+        <footer>
         <div class="container">
             <div class="footer-content">
                 <img src="https://via.placeholder.com/150x50?text=Pdflyx" alt="Pdflyx Logo">
@@ -683,7 +683,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+        </footer>
 
     <script>
         // Анимация появления секций при прокрутке
@@ -802,40 +802,46 @@
                                             standardsCategories[categoryName] = [];
                                         }
 
-                                        // Добавляем стандарты из файла в соответствующую категорию
-                                        // Извлекаем только необходимые поля для отображения
-                                        if (Array.isArray(data)) {
-                                            data.forEach(standard => {
-                                                // Формируем стандартизированное название
-                                                const typePart = standard.document_type || '';
-                                                const numberPart = standard.number || '';
-                                                const namePart = standard.full_name || '';
-                                                const statusPart = standard.status || '';
-
-                                                // Создаем полное название в формате: "Тип Номер Название (Статус)"
-                                                let standardName = '';
-                                                if (typePart) standardName += typePart + ' ';
-                                                if (numberPart) standardName += numberPart + ' ';
-                                                if (namePart) standardName += namePart;
-                                                if (statusPart) standardName += ` (${statusPart})`;
-
-                                                standardsCategories[categoryName].push(standardName);
-                                            });
-                                        } else if (typeof data === 'object' && !Array.isArray(data)) {
-                                            // Если это один документ, не массив
-                                            const typePart = data.document_type || '';
-                                            const numberPart = data.number || '';
-                                            const namePart = data.full_name || '';
-                                            const statusPart = data.status || '';
-
-                                            // Создаем полное название в формате: "Тип Номер Название (Статус)"
-                                            let standardName = '';
-                                            if (typePart) standardName += typePart + ' ';
-                                            if (numberPart) standardName += numberPart + ' ';
-                                            if (namePart) standardName += namePart;
-                                            if (statusPart) standardName += ` (${statusPart})`;
-
-                                            standardsCategories[categoryName].push(standardName);
+                                        // Извлекаем только необходимые поля: full_name и status
+                                        if (typeof data === 'object' && data !== null) {
+                                            // Если данные - это единичный документ
+                                            if (data.full_name) {
+                                                const standardName = data.full_name;
+                                                const status = data.status || '';
+                                                standardsCategories[categoryName].push({
+                                                    name: standardName,
+                                                    status: status
+                                                });
+                                            }
+                                            // Если данные содержат массив или объект с документами
+                                            else if (Array.isArray(data)) {
+                                                data.forEach(standard => {
+                                                    if (standard.full_name) {
+                                                        const standardName = standard.full_name;
+                                                        const status = standard.status || '';
+                                                        standardsCategories[categoryName].push({
+                                                            name: standardName,
+                                                            status: status
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                            // Если данные в другом формате (объект с вложенными объектами)
+                                            else {
+                                                Object.keys(data).forEach(key => {
+                                                    const item = data[key];
+                                                    if (typeof item === 'object' && item !== null) {
+                                                        if (item.full_name) {
+                                                            const standardName = item.full_name;
+                                                            const status = item.status || '';
+                                                            standardsCategories[categoryName].push({
+                                                                name: standardName,
+                                                                status: status
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
                                         }
                                     })
                             )
@@ -870,8 +876,39 @@
                                 icon.className = 'fas fa-file-pdf document-icon';
                                 listItem.appendChild(icon);
 
-                                const text = document.createTextNode(standard);
-                                listItem.appendChild(text);
+                                // Создаем основной текст
+                                const textName = document.createTextNode(standard.name);
+                                listItem.appendChild(textName);
+
+                                // Если есть статус, добавляем его
+                                if (standard.status) {
+                                    // Добавляем пробел
+                                    listItem.appendChild(document.createTextNode(' '));
+
+                                    // Создаем span для статуса
+                                    const statusSpan = document.createElement('span');
+                                    statusSpan.className = 'standard-status';
+                                    statusSpan.style.fontSize = '0.85em';
+                                    statusSpan.style.marginLeft = '5px';
+                                    statusSpan.style.padding = '2px 6px';
+                                    statusSpan.style.borderRadius = '3px';
+
+                                    // Устанавливаем цвет в зависимости от статуса
+                                    if (standard.status.toLowerCase().includes('действ')) {
+                                        statusSpan.style.backgroundColor = '#dff0d8';
+                                        statusSpan.style.color = '#3c763d';
+                                    } else if (standard.status.toLowerCase().includes('отмен') ||
+                                              standard.status.toLowerCase().includes('не действ')) {
+                                        statusSpan.style.backgroundColor = '#f2dede';
+                                        statusSpan.style.color = '#a94442';
+                                    } else {
+                                        statusSpan.style.backgroundColor = '#fcf8e3';
+                                        statusSpan.style.color = '#8a6d3b';
+                                    }
+
+                                    statusSpan.textContent = standard.status;
+                                    listItem.appendChild(statusSpan);
+                                }
 
                                 categoryList.appendChild(listItem);
                             });
