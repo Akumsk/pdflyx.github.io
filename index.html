@@ -735,32 +735,76 @@
             // Фильтрация списка стандартов
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
-                const items = document.querySelectorAll('.standards-list li');
 
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
+                // Поиск по строкам таблицы вместо элементов списка
+                const tables = document.querySelectorAll('.standards-table');
+
+                tables.forEach(table => {
+                    const rows = table.querySelectorAll('tbody tr');
+                    let hasVisibleRows = false;
+
+                    rows.forEach(row => {
+                        const nameCell = row.querySelector('td:first-child');
+                        const numberCell = row.querySelector('td:nth-child(2)');
+                        const statusCell = row.querySelector('td:nth-child(3)');
+
+                        // Получаем текст из всех ячеек для поиска
+                        const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                        const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
+                        const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
+
+                        // Объединяем текст для поиска по всем полям
+                        const rowText = `${nameText} ${numberText} ${statusText}`;
+
+                        // Проверяем, содержит ли какое-либо поле поисковый запрос
+                        if (rowText.includes(searchTerm)) {
+                            row.style.display = '';
+                            hasVisibleRows = true;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    // Показываем или скрываем таблицу в зависимости от наличия видимых строк
+                    table.style.display = hasVisibleRows ? '' : 'none';
                 });
 
                 // Показываем/скрываем заголовки категорий
                 const categories = document.querySelectorAll('.standards-category');
                 categories.forEach(category => {
-                    const categoryName = category.textContent.toLowerCase();
-                    const categoryItems = category.nextElementSibling.querySelectorAll('li');
-                    let hasVisibleItems = false;
-
-                    categoryItems.forEach(item => {
-                        if (item.style.display !== 'none') {
-                            hasVisibleItems = true;
-                        }
-                    });
-
-                    category.style.display = hasVisibleItems ? 'block' : 'none';
+                    // Категория и следующая за ней таблица
+                    const nextTable = category.nextElementSibling;
+                    if (nextTable && nextTable.classList.contains('standards-table')) {
+                        // Показываем заголовок категории только если таблица видима
+                        category.style.display = nextTable.style.display === 'none' ? 'none' : '';
+                    }
                 });
+
+                // Показываем сообщение, если ничего не найдено
+                const allTablesHidden = Array.from(tables).every(table => table.style.display === 'none');
+                const noResultsMessage = document.getElementById('no-results-message');
+
+                if (allTablesHidden && searchTerm !== '') {
+                    // Создаем сообщение, если его еще нет
+                    if (!noResultsMessage) {
+                        const message = document.createElement('p');
+                        message.id = 'no-results-message';
+                        message.textContent = 'По вашему запросу ничего не найдено';
+                        message.style.textAlign = 'center';
+                        message.style.padding = '20px';
+                        message.style.color = '#666';
+
+                        // Вставляем сообщение после поля поиска
+                        const searchContainer = document.querySelector('.search-container');
+                        if (searchContainer) {
+                            searchContainer.parentNode.insertBefore(message, searchContainer.nextSibling);
+                        }
+                    } else {
+                        noResultsMessage.style.display = '';
+                    }
+                } else if (noResultsMessage) {
+                    noResultsMessage.style.display = 'none';
+                }
             });
 
             // Функция загрузки списка стандартов
