@@ -808,9 +808,11 @@
                                             if (data.full_name) {
                                                 const standardName = data.full_name;
                                                 const status = data.status || '';
+                                                const number = data.number || '';
                                                 standardsCategories[categoryName].push({
                                                     name: standardName,
-                                                    status: status
+                                                    status: status,
+                                                    number: number
                                                 });
                                             }
                                             // Если данные содержат массив или объект с документами
@@ -819,9 +821,11 @@
                                                     if (standard.full_name) {
                                                         const standardName = standard.full_name;
                                                         const status = standard.status || '';
+                                                        const number = standard.number || '';
                                                         standardsCategories[categoryName].push({
                                                             name: standardName,
-                                                            status: status
+                                                            status: status,
+                                                            number: number
                                                         });
                                                     }
                                                 });
@@ -834,9 +838,11 @@
                                                         if (item.full_name) {
                                                             const standardName = item.full_name;
                                                             const status = item.status || '';
+                                                            const number = item.number || '';
                                                             standardsCategories[categoryName].push({
                                                                 name: standardName,
-                                                                status: status
+                                                                status: status,
+                                                                number: number
                                                             });
                                                         }
                                                     }
@@ -857,6 +863,56 @@
                             return;
                         }
 
+                        // Добавляем стили для таблицы стандартов
+                        const styleEl = document.createElement('style');
+                        styleEl.textContent = `
+                            .standards-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 20px;
+                            }
+                            .standards-table th {
+                                background-color: #f5f5f5;
+                                padding: 10px;
+                                text-align: left;
+                                font-weight: 600;
+                                border-bottom: 2px solid #ddd;
+                            }
+                            .standards-table td {
+                                padding: 8px 10px;
+                                border-bottom: 1px solid #eee;
+                                vertical-align: middle;
+                            }
+                            .standards-table tr:hover {
+                                background-color: #f9f9f9;
+                            }
+                            .standard-status {
+                                display: inline-block;
+                                font-size: 0.85em;
+                                padding: 2px 6px;
+                                border-radius: 3px;
+                                text-align: center;
+                                min-width: 100px;
+                            }
+                            .status-active {
+                                background-color: #dff0d8;
+                                color: #3c763d;
+                            }
+                            .status-inactive {
+                                background-color: #f2dede;
+                                color: #a94442;
+                            }
+                            .status-other {
+                                background-color: #fcf8e3;
+                                color: #8a6d3b;
+                            }
+                            .standard-number {
+                                font-family: monospace;
+                                white-space: nowrap;
+                            }
+                        `;
+                        document.head.appendChild(styleEl);
+
                         // Создаем список по категориям
                         for (const category in standardsCategories) {
                             if (standardsCategories[category].length === 0) continue;
@@ -866,54 +922,81 @@
                             categoryHeading.className = 'standards-category';
                             standardsList.appendChild(categoryHeading);
 
-                            const categoryList = document.createElement('ul');
-                            categoryList.className = 'standards-list';
+                            // Создаем таблицу вместо списка
+                            const table = document.createElement('table');
+                            table.className = 'standards-table';
+
+                            // Добавляем заголовок таблицы
+                            const thead = document.createElement('thead');
+                            const headerRow = document.createElement('tr');
+
+                            const nameHeader = document.createElement('th');
+                            nameHeader.textContent = 'Название';
+                            nameHeader.style.width = '60%';
+
+                            const numberHeader = document.createElement('th');
+                            numberHeader.textContent = 'Номер';
+                            numberHeader.style.width = '20%';
+
+                            const statusHeader = document.createElement('th');
+                            statusHeader.textContent = 'Статус';
+                            statusHeader.style.width = '20%';
+
+                            headerRow.appendChild(nameHeader);
+                            headerRow.appendChild(numberHeader);
+                            headerRow.appendChild(statusHeader);
+                            thead.appendChild(headerRow);
+                            table.appendChild(thead);
+
+                            // Создаем тело таблицы
+                            const tbody = document.createElement('tbody');
 
                             standardsCategories[category].forEach(standard => {
-                                const listItem = document.createElement('li');
+                                const row = document.createElement('tr');
 
+                                // Ячейка с названием
+                                const nameCell = document.createElement('td');
                                 const icon = document.createElement('i');
                                 icon.className = 'fas fa-file-pdf document-icon';
-                                listItem.appendChild(icon);
+                                icon.style.marginRight = '8px';
+                                icon.style.color = '#0077cc';
+                                nameCell.appendChild(icon);
+                                nameCell.appendChild(document.createTextNode(standard.name));
 
-                                // Создаем основной текст
-                                const textName = document.createTextNode(standard.name);
-                                listItem.appendChild(textName);
+                                // Ячейка с номером
+                                const numberCell = document.createElement('td');
+                                numberCell.className = 'standard-number';
+                                numberCell.textContent = standard.number || '';
 
-                                // Если есть статус, добавляем его
+                                // Ячейка со статусом
+                                const statusCell = document.createElement('td');
+                                const statusSpan = document.createElement('span');
+                                statusSpan.className = 'standard-status';
+
                                 if (standard.status) {
-                                    // Добавляем пробел
-                                    listItem.appendChild(document.createTextNode(' '));
-
-                                    // Создаем span для статуса
-                                    const statusSpan = document.createElement('span');
-                                    statusSpan.className = 'standard-status';
-                                    statusSpan.style.fontSize = '0.85em';
-                                    statusSpan.style.marginLeft = '5px';
-                                    statusSpan.style.padding = '2px 6px';
-                                    statusSpan.style.borderRadius = '3px';
-
-                                    // Устанавливаем цвет в зависимости от статуса
+                                    // Устанавливаем класс в зависимости от статуса
                                     if (standard.status.toLowerCase().includes('действ')) {
-                                        statusSpan.style.backgroundColor = '#dff0d8';
-                                        statusSpan.style.color = '#3c763d';
+                                        statusSpan.classList.add('status-active');
                                     } else if (standard.status.toLowerCase().includes('отмен') ||
                                               standard.status.toLowerCase().includes('не действ')) {
-                                        statusSpan.style.backgroundColor = '#f2dede';
-                                        statusSpan.style.color = '#a94442';
+                                        statusSpan.classList.add('status-inactive');
                                     } else {
-                                        statusSpan.style.backgroundColor = '#fcf8e3';
-                                        statusSpan.style.color = '#8a6d3b';
+                                        statusSpan.classList.add('status-other');
                                     }
 
                                     statusSpan.textContent = standard.status;
-                                    listItem.appendChild(statusSpan);
+                                    statusCell.appendChild(statusSpan);
                                 }
 
-                                categoryList.appendChild(listItem);
+                                row.appendChild(nameCell);
+                                row.appendChild(numberCell);
+                                row.appendChild(statusCell);
+
+                                tbody.appendChild(row);
                             });
 
-                            standardsList.appendChild(categoryList);
+                            table.appendChild(tbody);
+                            standardsList.appendChild(table);
                         }
                     })
                     .catch(error => {
