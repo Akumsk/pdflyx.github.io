@@ -473,15 +473,19 @@
                     rows.forEach(row => {
                         const nameCell = row.querySelector('td:first-child');
                         const numberCell = row.querySelector('td:nth-child(2)');
-                        const statusCell = row.querySelector('td:nth-child(3)');
+                        const revisionCell = row.querySelector('td:nth-child(3)');
+                        const dateCell = row.querySelector('td:nth-child(4)');
+                        const statusCell = row.querySelector('td:nth-child(5)');
 
                         // Получаем текст из всех ячеек для поиска
                         const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
                         const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
+                        const revisionText = revisionCell ? revisionCell.textContent.toLowerCase() : '';
+                        const dateText = dateCell ? dateCell.textContent.toLowerCase() : '';
                         const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
 
                         // Объединяем текст для поиска по всем полям
-                        const rowText = `${nameText} ${numberText} ${statusText}`;
+                        const rowText = `${nameText} ${numberText} ${revisionText} ${dateText} ${statusText}`;
 
                         // Проверяем, содержит ли какое-либо поле поисковый запрос
                         if (rowText.includes(searchTerm)) {
@@ -563,7 +567,13 @@
                     })
                     .then(files => {
                         // Создаем объект для категорий стандартов
-                        const standardsCategories = {};
+                        const standardsCategories = {
+                            'Своды правил': [],
+                            'Постановления и Федеральные законы': [],
+                            'ГОСТы': [],
+                            'СанПин': [],
+                            'Прочее': []
+                        };
 
                         // Обрабатываем только JSON файлы
                         const jsonFiles = files.filter(file => file.name.endsWith('.json'));
@@ -582,22 +592,22 @@
                                         // Определяем категорию на основе имени файла или содержимого
                                         const categoryName = getCategoryFromFileName(file.name);
 
-                                        // Создаем массив для категории, если он не существует
-                                        if (!standardsCategories[categoryName]) {
-                                            standardsCategories[categoryName] = [];
-                                        }
-
-                                        // Извлекаем только необходимые поля: full_name и status
+                                        // Извлекаем только необходимые поля
                                         if (typeof data === 'object' && data !== null) {
                                             // Если данные - это единичный документ
                                             if (data.full_name) {
                                                 const standardName = data.full_name;
                                                 const status = data.status || '';
                                                 const number = data.number || '';
+                                                const revision = data.revision || '';
+                                                const date = data.date_issue || '';
+
                                                 standardsCategories[categoryName].push({
                                                     name: standardName,
                                                     status: status,
-                                                    number: number
+                                                    number: number,
+                                                    revision: revision,
+                                                    date: date
                                                 });
                                             }
                                             // Если данные содержат массив или объект с документами
@@ -607,10 +617,15 @@
                                                         const standardName = standard.full_name;
                                                         const status = standard.status || '';
                                                         const number = standard.number || '';
+                                                        const revision = standard.revision || '';
+                                                        const date = standard.date_issue || '';
+
                                                         standardsCategories[categoryName].push({
                                                             name: standardName,
                                                             status: status,
-                                                            number: number
+                                                            number: number,
+                                                            revision: revision,
+                                                            date: date
                                                         });
                                                     }
                                                 });
@@ -624,10 +639,15 @@
                                                             const standardName = item.full_name;
                                                             const status = item.status || '';
                                                             const number = item.number || '';
+                                                            const revision = item.revision || '';
+                                                            const date = item.date_issue || '';
+
                                                             standardsCategories[categoryName].push({
                                                                 name: standardName,
                                                                 status: status,
-                                                                number: number
+                                                                number: number,
+                                                                revision: revision,
+                                                                date: date
                                                             });
                                                         }
                                                     }
@@ -658,9 +678,18 @@
                         const totalCountElement = document.getElementById('totalCount');
                         totalCountElement.textContent = `Всего найдено: ${totalDocuments} документов`;
 
-                        // Создаем список по категориям
-                        for (const category in standardsCategories) {
-                            if (standardsCategories[category].length === 0) continue;
+                        // Заданный порядок категорий
+                        const categoryOrder = [
+                            'Своды правил',
+                            'Постановления и Федеральные законы',
+                            'ГОСТы',
+                            'СанПин',
+                            'Прочее'
+                        ];
+
+                        // Создаем список по категориям в заданном порядке
+                        categoryOrder.forEach(category => {
+                            if (!standardsCategories[category] || standardsCategories[category].length === 0) return;
 
                             // Создаем заголовок категории с количеством документов
                             const categoryHeader = document.createElement('div');
@@ -687,18 +716,28 @@
 
                             const nameHeader = document.createElement('th');
                             nameHeader.textContent = 'Название';
-                            nameHeader.style.width = '60%';
+                            nameHeader.style.width = '40%';
 
                             const numberHeader = document.createElement('th');
                             numberHeader.textContent = 'Номер';
-                            numberHeader.style.width = '20%';
+                            numberHeader.style.width = '15%';
+
+                            const revisionHeader = document.createElement('th');
+                            revisionHeader.textContent = 'Версия/Изменение';
+                            revisionHeader.style.width = '15%';
+
+                            const dateHeader = document.createElement('th');
+                            dateHeader.textContent = 'Дата';
+                            dateHeader.style.width = '15%';
 
                             const statusHeader = document.createElement('th');
                             statusHeader.textContent = 'Статус';
-                            statusHeader.style.width = '20%';
+                            statusHeader.style.width = '15%';
 
                             headerRow.appendChild(nameHeader);
                             headerRow.appendChild(numberHeader);
+                            headerRow.appendChild(revisionHeader);
+                            headerRow.appendChild(dateHeader);
                             headerRow.appendChild(statusHeader);
                             thead.appendChild(headerRow);
                             table.appendChild(thead);
@@ -723,6 +762,14 @@
                                 numberCell.className = 'standard-number';
                                 numberCell.textContent = standard.number || '';
 
+                                // Ячейка с версией/изменением
+                                const revisionCell = document.createElement('td');
+                                revisionCell.textContent = standard.revision || '';
+
+                                // Ячейка с датой
+                                const dateCell = document.createElement('td');
+                                dateCell.textContent = standard.date || '';
+
                                 // Ячейка со статусом
                                 const statusCell = document.createElement('td');
                                 const statusSpan = document.createElement('span');
@@ -745,6 +792,8 @@
 
                                 row.appendChild(nameCell);
                                 row.appendChild(numberCell);
+                                row.appendChild(revisionCell);
+                                row.appendChild(dateCell);
                                 row.appendChild(statusCell);
 
                                 tbody.appendChild(row);
@@ -752,7 +801,7 @@
 
                             table.appendChild(tbody);
                             standardsList.appendChild(table);
-                        }
+                        });
                     })
                     .catch(error => {
                         console.error('Ошибка при загрузке данных:', error);
@@ -767,15 +816,16 @@
 
                 // Определяем категорию на основе имени файла
                 if (name.includes('sp') || name.includes('свод')) {
-                    return 'СП (Своды правил)';
+                    return 'Своды правил';
+                } else if (name.includes('fz') || name.includes('постановление') ||
+                          name.includes('regulation') || name.includes('закон')) {
+                    return 'Постановления и Федеральные законы';
                 } else if (name.includes('gost') || name.includes('гост')) {
-                    return 'ГОСТ';
-                } else if (name.includes('fz') || name.includes('постановление') || name.includes('regulation')) {
-                    return 'ФЗ и Постановления';
+                    return 'ГОСТы';
                 } else if (name.includes('snip') || name.includes('снип')) {
-                    return 'СНиП';
+                    return 'СанПин';
                 } else {
-                    return 'Другое';
+                    return 'Прочее';
                 }
             }
         });
