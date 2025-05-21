@@ -580,6 +580,23 @@
             margin-bottom: 1rem;
         }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MN2TNQN1TE"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-MN2TNQN1TE');
+
+        // Function to track button clicks
+        function trackButtonClick(buttonName) {
+            gtag('event', 'button_click', {
+                'event_category': 'engagement',
+                'event_label': buttonName
+            });
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -588,9 +605,9 @@
         <h1>Pdflyx Bot</h1>
                 <p class="tagline">Умный строительный помощник на основе российских нормативов</p>
                 <div class="hero-buttons">
-                    <a href="https://t.me/Pdflyx_bot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
-                    <a href="chat.html" class="btn btn-outline">Открыть в браузере</a>
-                    <a href="subscription.html" class="btn btn-primary" style="background: var(--secondary);"><i class="fas fa-crown"></i> Оформить подписку</a>
+                    <a href="https://t.me/Pdflyx_bot" class="btn btn-primary" onclick="trackButtonClick('telegram_open')"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
+                    <a href="chat.html" class="btn btn-outline" onclick="trackButtonClick('browser_open')">Открыть в браузере</a>
+                    <a href="subscription.html" class="btn btn-primary" style="background: var(--secondary);" onclick="trackButtonClick('subscription_open')"><i class="fas fa-crown"></i> Оформить подписку</a>
                 </div>
             </div>
         </div>
@@ -644,8 +661,8 @@
                 <div class="try-bot">
                     <p>Попробуйте задать свой вопрос прямо сейчас!</p>
                     <div class="hero-buttons" style="margin-top: 1rem;">
-                        <a href="https://t.me/Pdflyx_bot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
-                        <a href="subscription.html" class="btn btn-outline">Тарифы</a>
+                        <a href="https://t.me/Pdflyx_bot" class="btn btn-primary" onclick="trackButtonClick('telegram_open')"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
+                        <a href="subscription.html" class="btn btn-outline" onclick="trackButtonClick('subscription_open')">Тарифы</a>
                     </div>
                 </div>
             </section>
@@ -659,7 +676,7 @@
             <div class="modal-header">
                 <h2>Нормативная база</h2>
                 <p>Бот работает с актуальными российскими строительными нормативами:</p>
-                <a href="standards.html" class="btn btn-outline-secondary" style="margin-top: 10px;">Открыть полный список в отдельной странице</a>
+                <a href="standards.html" class="btn btn-outline-secondary" style="margin-top: 10px;" onclick="trackButtonClick('standards_list_open')">Открыть полный список в отдельной странице</a>
             </div>
             <div class="search-container">
                 <input type="text" class="search-input" placeholder="Поиск по нормативам...">
