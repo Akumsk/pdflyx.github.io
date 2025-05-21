@@ -543,7 +543,7 @@
                 <p class="tagline">Умный строительный помощник на основе российских нормативов</p>
                 <div class="hero-buttons">
                     <a href="https://t.me/Pdflyx_bot" class="btn btn-primary"><i class="fab fa-telegram"></i> Открыть в Telegram</a>
-                    <a href="#features" class="btn btn-outline">Узнать больше</a>
+                    <a href="subscription.html" class="btn btn-outline">Открыть в браузере</a>
                 </div>
             </div>
         </div>
@@ -576,48 +576,54 @@
             </section>
 
             <section class="section fade-in">
-                <h2>Подписка</h2>
-                <div class="price-plans">
-                    <div class="price-card">
-                        <h3>Бесплатный доступ</h3>
-                        <div class="price">0 ₽</div>
-                        <ul class="price-features">
-                            <li>Не более 5 запросов в день</li>
-                            <li>Лимит 30 запросов в месяц</li>
-                            <li>Базовые ответы с цитированием источников</li>
-                            <li>Регулярные обновления базы знаний</li>
-                        </ul>
-                        <a href="https://t.me/Pdflyx_bot" class="btn btn-outline-secondary">Начать бесплатно</a>
+                <h2>Примеры запросов</h2>
+                <div class="examples">
+                    <style>
+                        .examples {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                            gap: 2rem;
+                            margin-top: 2rem;
+                        }
+                        .example-card {
+                            background: #f8f9fa;
+                            border-radius: 10px;
+                            padding: 1.5rem;
+                            transition: all 0.3s ease;
+                        }
+                        .example-card:hover {
+                            transform: translateY(-5px);
+                            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+                        }
+                        .example-title {
+                            color: var(--primary-dark);
+                            font-weight: 600;
+                            margin-bottom: 1rem;
+                        }
+                        .example-prompt {
+                            color: var(--gray);
+                            font-style: italic;
+                            margin-bottom: 1rem;
+                        }
+                        .example-description {
+                            font-size: 0.9rem;
+                            color: var(--dark);
+                        }
+                    </style>
+                    <div class="example-card">
+                        <div class="example-title">Нормативы по фундаментам</div>
+                        <div class="example-prompt">"Какие требования предъявляются к глубине заложения фундаментов в СП 22.13330?"</div>
+                        <div class="example-description">Получите точные указания по глубине заложения фундаментов с учетом действующих норм.</div>
                     </div>
-
-                    <div class="price-card highlighted">
-                        <div class="price-card-badge">Популярный</div>
-                        <h3>Стандартный план</h3>
-                        <div class="price">1000 ₽ <small>/месяц</small></div>
-                        <ul class="price-features">
-                            <li>Неограниченное количество запросов в день</li>
-                            <li>Лимит 200 запросов в месяц</li>
-                            <li>Полный доступ к нормативной базе</li>
-                            <li>Развёрнутые ответы с цитированием источников</li>
-                            <li>Техническая поддержка</li>
-                            <li>Добавление стандартов по запросу</li>
-                        </ul>
-                        <a href="#" class="btn btn-primary">Оформить подписку</a>
-        </div>
-
-                    <div class="price-card">
-                        <h3>Премиум план</h3>
-                        <div class="price">2000 ₽ <small>/месяц</small></div>
-                        <ul class="price-features">
-                            <li>Неограниченное количество запросов в день</li>
-                            <li>Лимит 500 запросов в месяц</li>
-                            <li>Полный доступ к нормативной базе</li>
-                            <li>Просмотр стандартов с выделенными цитатами</li>
-                            <li>Приоритетная техническая поддержка</li>
-                            <li>Добавление стандартов по запросу</li>
-                            <li>Расширенная статистика использования</li>
-            </ul>
-                        <a href="#" class="btn btn-primary">Оформить премиум</a>
+                    <div class="example-card">
+                        <div class="example-title">Пожарная безопасность</div>
+                        <div class="example-prompt">"Расскажи про требования к эвакуационным путям в жилых зданиях"</div>
+                        <div class="example-description">Узнайте актуальные требования пожарной безопасности для жилых зданий.</div>
+                    </div>
+                    <div class="example-card">
+                        <div class="example-title">Расчет конструкций</div>
+                        <div class="example-prompt">"Как правильно рассчитать снеговую нагрузку по СП 20.13330?"</div>
+                        <div class="example-description">Получите пошаговое руководство по расчету снеговых нагрузок согласно актуальным нормам.</div>
                     </div>
                 </div>
             </section>
