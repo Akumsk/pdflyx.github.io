@@ -3,34 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подписка - Pdflyx Bot</title>
+    <title>Pdflyx Bot — Подписка</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
+        :root {
+            --primary: #0077cc;
+            --primary-dark: #005fa3;
+            --secondary: #00b894;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0077cc, #005fa3);
-            color: white;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
         .container {
-            text-align: center;
-            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
         }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
         }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
+
+        .section {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
         }
+
+        .price-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-card-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-bottom-left-radius: 10px;
+        }
+
+        .price-card.highlighted {
+            border: 2px solid var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .price-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 1.5rem 0;
+        }
+
+        .price small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--gray);
+        }
+
+        .price-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .price-features li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .price-features li::before {
+            content: '✓';
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
+        }
+
         .btn {
             display: inline-block;
             padding: 0.8rem 1.8rem;
@@ -38,25 +146,159 @@
             border-radius: 5px;
             font-weight: 500;
             transition: all 0.3s ease;
-            background: white;
-            color: #0077cc;
         }
-        .btn:hover {
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #00a382;
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .development-icon {
-            font-size: 4rem;
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 119, 204, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            padding-left: 3rem;
+            position: relative;
             margin-bottom: 2rem;
+        }
+
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .price-plans {
+                grid-template-columns: 1fr;
+            }
+
+            .price-card.highlighted {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <i class="fas fa-code development-icon"></i>
-        <h1>Страница в разработке</h1>
-        <p>Мы работаем над улучшением сервиса. Скоро здесь появится информация о подписках.</p>
-        <a href="index.html" class="btn">Вернуться на главную</a>
-    </div>
+    <header>
+        <div class="container">
+            <h1>Подписка на Pdflyx Bot</h1>
+            <p>Выберите подходящий тарифный план</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>Тарифные планы</h2>
+            <div class="price-plans">
+                <div class="price-card">
+                    <h3>Бесплатный доступ</h3>
+                    <div class="price">0 ₽</div>
+                    <ul class="price-features">
+                        <li>Не более 5 запросов в день</li>
+                        <li>Лимит 30 запросов в месяц</li>
+                        <li>Базовые ответы с цитированием источников</li>
+                        <li>Регулярные обновления базы знаний</li>
+                    </ul>
+                    <a href="https://t.me/Pdflyx_bot" class="btn btn-outline">Начать бесплатно</a>
+                </div>
+
+                <div class="price-card highlighted">
+                    <div class="price-card-badge">Популярный</div>
+                    <h3>Стандартный план</h3>
+                    <div class="price">1000 ₽ <small>/месяц</small></div>
+                    <ul class="price-features">
+                        <li>Неограниченное количество запросов в день</li>
+                        <li>Лимит 200 запросов в месяц</li>
+                        <li>Полный доступ к нормативной базе</li>
+                        <li>Развёрнутые ответы с цитированием источников</li>
+                        <li>Техническая поддержка</li>
+                        <li>Добавление стандартов по запросу</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Оформить подписку</a>
+                </div>
+
+                <div class="price-card">
+                    <h3>Премиум план</h3>
+                    <div class="price">2000 ₽ <small>/месяц</small></div>
+                    <ul class="price-features">
+                        <li>Неограниченное количество запросов в день</li>
+                        <li>Лимит 500 запросов в месяц</li>
+                        <li>Полный доступ к нормативной базе</li>
+                        <li>Просмотр стандартов с выделенными цитатами</li>
+                        <li>Приоритетная техническая поддержка</li>
+                        <li>Добавление стандартов по запросу</li>
+                        <li>Расширенная статистика использования</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Оформить премиум</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section how-it-works">
+            <h2>Как это работает</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>Оплатите подписку</h3>
+                    <p>Выберите удобный способ оплаты и оформите подписку онлайн</p>
+                </div>
+                <div class="step">
+                    <h3>Получите доступ к боту</h3>
+                    <p>Подписка активируется автоматически, и вы получаете доступ к боту в Telegram</p>
+                </div>
+                <div class="step">
+                    <h3>Задавайте вопросы</h3>
+                    <p>Просто задайте вопрос по проектированию или строительству в чате с ботом</p>
+                </div>
+                <div class="step">
+                    <h3>Получайте точные ответы</h3>
+                    <p>Бот найдет информацию в нормативных документах и предоставит вам точный ответ с источником</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Pdflyx Bot. Все права защищены.</p>
+            <p><a href="index.html" style="color: white; text-decoration: underline;">Вернуться на главную</a></p>
+        </div>
+    </footer>
 </body>
 </html>
