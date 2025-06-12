@@ -458,72 +458,133 @@
     </footer>
 
     <script>
-        // Telegram Web App Integration
-        class TelegramWebAppIntegration {
+        // Smart Subscription System - handles both Browser and Telegram environments
+        class SmartSubscriptionSystem {
             constructor() {
                 this.tg = window.Telegram?.WebApp;
+                this.botUsername = 'Pdflyx_bot'; // Replace with your actual bot username
+                this.isTelegramEnvironment = this.checkTelegramEnvironment();
                 this.init();
             }
 
-            init() {
-                if (!this.tg) {
-                    console.error('Telegram Web App not available');
-                    this.showFallbackButtons();
-                    return;
-                }
+            checkTelegramEnvironment() {
+                // Check multiple indicators that we're in Telegram
+                return !!(
+                    window.Telegram?.WebApp ||
+                    window.TelegramWebviewProxy ||
+                    (window.parent !== window && window.parent.postMessage) ||
+                    navigator.userAgent.includes('TelegramBot')
+                );
+            }
 
+            init() {
+                console.log('🚀 Initializing Smart Subscription System');
+                console.log('📱 Telegram Environment:', this.isTelegramEnvironment);
+                console.log('🔌 Telegram Web App Available:', !!this.tg);
+
+                if (this.isTelegramEnvironment && this.tg) {
+                    this.initTelegramMode();
+                } else {
+                    this.initBrowserMode();
+                }
+            }
+
+            initTelegramMode() {
+                console.log('📱 Initializing Telegram Web App mode');
+                
                 // Initialize Telegram Web App
                 this.tg.ready();
                 this.tg.expand();
                 
-                // Set up event listeners
-                this.setupEventListeners();
+                // Set up event listeners for Telegram
+                this.setupTelegramEventListeners();
                 
-                // Show Telegram-style UI
+                // Apply Telegram theme
                 this.setupTelegramUI();
 
-                console.log('Telegram Web App initialized successfully');
+                // Show status indicator
+                this.showModeIndicator('telegram');
+
+                console.log('✅ Telegram Web App initialized successfully');
             }
 
-            setupEventListeners() {
-                // Handle subscription buttons
+            initBrowserMode() {
+                console.log('🌐 Initializing Browser mode');
+                
+                // Set up event listeners for browser
+                this.setupBrowserEventListeners();
+
+                // Show status indicator
+                this.showModeIndicator('browser');
+
+                console.log('✅ Browser mode initialized successfully');
+            }
+
+            showModeIndicator(mode) {
+                // Add a small indicator to show current mode (for debugging)
+                const indicator = document.createElement('div');
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: ${mode === 'telegram' ? '#0088cc' : '#28a745'};
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                    z-index: 1000;
+                    opacity: 0.8;
+                `;
+                indicator.textContent = mode === 'telegram' ? '📱 Telegram' : '🌐 Browser';
+                document.body.appendChild(indicator);
+
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    if (indicator.parentNode) {
+                        indicator.parentNode.removeChild(indicator);
+                    }
+                }, 3000);
+            }
+
+            setupTelegramEventListeners() {
                 document.querySelectorAll('.telegram-subscribe').forEach(button => {
-                    button.addEventListener('click', (e) => this.handleSubscription(e));
+                    button.addEventListener('click', (e) => this.handleTelegramSubscription(e));
+                });
+            }
+
+            setupBrowserEventListeners() {
+                document.querySelectorAll('.telegram-subscribe').forEach(button => {
+                    button.addEventListener('click', (e) => this.handleBrowserSubscription(e));
                 });
             }
 
             setupTelegramUI() {
                 // Apply Telegram theme if available
-                if (this.tg.themeParams) {
-                    document.documentElement.style.setProperty('--tg-bg-color', this.tg.themeParams.bg_color || '#ffffff');
-                    document.documentElement.style.setProperty('--tg-text-color', this.tg.themeParams.text_color || '#000000');
-                    document.documentElement.style.setProperty('--tg-hint-color', this.tg.themeParams.hint_color || '#999999');
-                    document.documentElement.style.setProperty('--tg-button-color', this.tg.themeParams.button_color || '#007bff');
-                    document.documentElement.style.setProperty('--tg-button-text-color', this.tg.themeParams.button_text_color || '#ffffff');
+                if (this.tg?.themeParams) {
+                    const theme = this.tg.themeParams;
+                    document.documentElement.style.setProperty('--tg-bg-color', theme.bg_color || '#ffffff');
+                    document.documentElement.style.setProperty('--tg-text-color', theme.text_color || '#000000');
+                    document.documentElement.style.setProperty('--tg-hint-color', theme.hint_color || '#999999');
+                    document.documentElement.style.setProperty('--tg-button-color', theme.button_color || '#007bff');
+                    document.documentElement.style.setProperty('--tg-button-text-color', theme.button_text_color || '#ffffff');
                 }
 
                 // Set main button for primary action
-                this.tg.MainButton.setText('Выбрать тарифный план');
-                this.tg.MainButton.show();
+                if (this.tg?.MainButton) {
+                    this.tg.MainButton.setText('Выбрать тарифный план');
+                    this.tg.MainButton.show();
+                }
             }
 
-            handleSubscription(event) {
+            handleTelegramSubscription(event) {
                 const button = event.target;
                 const plan = button.dataset.plan;
 
-                console.log('🔍 Debug - handleSubscription called with plan:', plan);
-                console.log('🔍 Debug - Telegram Web App available:', !!this.tg);
+                console.log('📱 Telegram subscription request for plan:', plan);
 
                 if (!plan) {
                     console.error('❌ No plan specified');
-                    alert('Ошибка: план не указан');
-                    return;
-                }
-
-                // Check if Telegram Web App is available
-                if (!this.tg) {
-                    console.error('❌ Telegram Web App not available in handleSubscription');
-                    alert('⚠️ Этот сайт работает только в Telegram Web App.\n\nОткройте ссылку через Telegram бота.');
+                    this.tg?.showAlert('Ошибка: план не указан');
                     return;
                 }
 
@@ -536,8 +597,8 @@
                     console.error('⏰ Subscription timeout - resetting button');
                     button.disabled = false;
                     this.resetButtonText(button, plan);
-                    alert('⚠️ Превышено время ожидания. Попробуйте еще раз.');
-                }, 10000); // 10 seconds timeout
+                    this.tg?.showAlert('⚠️ Превышено время ожидания. Попробуйте еще раз.');
+                }, 10000);
 
                 // Prepare data for Telegram bot
                 const subscriptionData = {
@@ -545,10 +606,11 @@
                     plan: plan,
                     timestamp: Date.now(),
                     user_agent: navigator.userAgent,
-                    url: window.location.href
+                    url: window.location.href,
+                    telegram_user: this.tg?.initDataUnsafe?.user || null
                 };
 
-                console.log('📤 Sending data to Telegram:', subscriptionData);
+                console.log('📤 Sending data to Telegram bot:', subscriptionData);
 
                 try {
                     // Send data to Telegram bot
@@ -560,20 +622,13 @@
                     clearTimeout(timeoutId);
                     
                     // Show success feedback
-                    this.showSuccessMessage(plan);
+                    this.showTelegramSuccessMessage(plan);
                     
                 } catch (error) {
                     console.error('❌ Error sending data to Telegram:', error);
                     
-                    // Clear timeout
                     clearTimeout(timeoutId);
-                    
-                    // Show error with fallback
-                    if (this.tg && this.tg.showAlert) {
-                        this.showErrorMessage();
-                    } else {
-                        alert('❌ Произошла ошибка при отправке запроса.\n\nПопробуйте снова или обратитесь в поддержку.');
-                    }
+                    this.showTelegramErrorMessage();
                     
                     // Reset button state
                     button.disabled = false;
@@ -581,24 +636,172 @@
                 }
             }
 
-            showSuccessMessage(plan) {
+            handleBrowserSubscription(event) {
+                const button = event.target;
+                const plan = button.dataset.plan;
+
+                console.log('🌐 Browser subscription request for plan:', plan);
+
+                if (!plan) {
+                    alert('Ошибка: план не указан');
+                    return;
+                }
+
+                // Show loading state briefly for better UX
+                button.disabled = true;
+                button.innerHTML = '⏳ Перенаправление...';
+
+                // Get plan details for the redirect
+                const planDetails = this.getPlanDetails(plan);
+
+                setTimeout(() => {
+                    // Reset button
+                    button.disabled = false;
+                    this.resetButtonText(button, plan);
+
+                    // Show redirect modal/confirmation
+                    this.showBrowserRedirectModal(plan, planDetails);
+                }, 1000);
+            }
+
+            getPlanDetails(plan) {
+                const plans = {
+                    'standard': {
+                        name: 'Стандартный план',
+                        price: '1 000 ₽/месяц',
+                        oldPrice: '1 500 ₽',
+                        features: [
+                            'Неограниченные запросы в день',
+                            '200 запросов в месяц',
+                            'Полный доступ к нормативной базе',
+                            'Техническая поддержка'
+                        ]
+                    },
+                    'premium': {
+                        name: 'Премиум план',
+                        price: '3 000 ₽/месяц',
+                        features: [
+                            'Неограниченные запросы в день',
+                            '500 запросов в месяц',
+                            'Все функции стандартного плана',
+                            'Приоритетная поддержка'
+                        ]
+                    }
+                };
+                return plans[plan] || plans['standard'];
+            }
+
+            showBrowserRedirectModal(plan, planDetails) {
+                // Create modal
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    font-family: 'Open Sans', sans-serif;
+                `;
+
+                modal.innerHTML = `
+                    <div style="
+                        background: white;
+                        padding: 2rem;
+                        border-radius: 15px;
+                        max-width: 400px;
+                        width: 90%;
+                        text-align: center;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    ">
+                        <h3 style="margin-bottom: 1rem; color: #050a30;">🤖 Подписка через Telegram</h3>
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: #007bff; margin-bottom: 0.5rem;">${planDetails.name}</h4>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: #050a30;">
+                                ${planDetails.oldPrice ? `<span style="text-decoration: line-through; color: #999; font-size: 1rem;">${planDetails.oldPrice}</span> ` : ''}
+                                ${planDetails.price}
+                            </div>
+                        </div>
+                        <p style="margin-bottom: 1.5rem; color: #666; line-height: 1.5;">
+                            Для оформления подписки перейдите в Telegram бот и отправьте команду:
+                        </p>
+                        <div style="
+                            background: #f8f9fa;
+                            padding: 1rem;
+                            border-radius: 8px;
+                            margin-bottom: 1.5rem;
+                            font-family: monospace;
+                            font-size: 1.1rem;
+                            font-weight: bold;
+                            color: #007bff;
+                        ">/subscription</div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                                flex: 1;
+                                padding: 0.75rem;
+                                background: #6c757d;
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: bold;
+                            ">Отмена</button>
+                            <button onclick="window.open('https://t.me/${this.botUsername}', '_blank')" style="
+                                flex: 2;
+                                padding: 0.75rem;
+                                background: #007bff;
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-weight: bold;
+                            ">📱 Открыть Telegram</button>
+                        </div>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #999;">
+                            После перехода в бот отправьте команду <strong>/subscription</strong>
+                        </p>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                // Close modal on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+
+                // Track the redirect
+                if (window.gtag) {
+                    gtag('event', 'browser_redirect_to_telegram', {
+                        'event_category': 'subscription',
+                        'event_label': plan
+                    });
+                }
+            }
+
+            showTelegramSuccessMessage(plan) {
                 const planNames = {
                     'standard': 'Стандартный',
                     'premium': 'Премиум'
                 };
 
-                this.tg.showAlert(
+                this.tg?.showAlert(
                     `✅ Запрос на подписку "${planNames[plan] || plan}" отправлен!\n\n` +
                     'Вы получите ссылку для оплаты в чате с ботом.',
                     () => {
-                        // Close web app after showing alert
-                        this.tg.close();
+                        this.tg?.close();
                     }
                 );
             }
 
-            showErrorMessage() {
-                this.tg.showAlert(
+            showTelegramErrorMessage() {
+                this.tg?.showAlert(
                     '❌ Произошла ошибка при отправке запроса.\n\n' +
                     'Пожалуйста, попробуйте снова или обратитесь в поддержку.'
                 );
@@ -612,55 +815,28 @@
                 
                 button.innerHTML = originalTexts[plan] || '💳 Оформить подписку';
             }
-
-            showFallbackButtons() {
-                // Show alternative buttons for non-Telegram users
-                console.log('Showing fallback buttons for non-Telegram environment');
-                
-                document.querySelectorAll('.telegram-subscribe').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        alert('Этот сайт работает только в Telegram Web App.\n\nОткройте ссылку через Telegram бота.');
-                    });
-                });
-            }
         }
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new TelegramWebAppIntegration();
+            new SmartSubscriptionSystem();
         });
 
-        // Additional utility functions
-        window.TelegramSubscription = {
-            // Function to manually trigger subscription (if needed)
-            subscribe: function(plan) {
+        // Global utility functions
+        window.SubscriptionSystem = {
+            isTelegramEnvironment: () => !!(window.Telegram?.WebApp),
+            
+            openTelegramBot: (botUsername = 'Pdflyx_bot') => {
+                window.open(`https://t.me/${botUsername}`, '_blank');
+            },
+            
+            testSubscription: (plan) => {
                 const button = document.querySelector(`[data-plan="${plan}"]`);
                 if (button) {
                     button.click();
                 }
-            },
-
-            // Function to check if running in Telegram
-            isTelegramWebApp: function() {
-                return !!(window.Telegram && window.Telegram.WebApp);
-            },
-
-            // Function to get Telegram user info (if available)
-            getTelegramUser: function() {
-                if (this.isTelegramWebApp()) {
-                    return window.Telegram.WebApp.initDataUnsafe?.user;
-                }
-                return null;
             }
         };
-
-        // Reset the stuck button
-        const button = document.querySelector('[data-plan="standard"]');
-        if (button) {
-            button.disabled = false;
-            button.innerHTML = '💳 Оформить подписку';
-        }
     </script>
 </body>
 </html>
