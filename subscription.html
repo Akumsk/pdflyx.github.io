@@ -2,8 +2,18 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#007bff">
+    
+    <!-- Telegram Web App Meta Tags -->
+    <meta name="telegram:title" content="PDFlyx - Подписки">
+    <meta name="telegram:description" content="Выберите подходящий тарифный план для PDFlyx">
+    <meta name="telegram:image" content="https://pdflyx.com/assets/logo.png">
+    
     <title>Pdflyx Bot — Подписка</title>
+
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -208,12 +218,127 @@
             text-align: center;
         }
 
+        /* Subscription Plans Styling */
+        .subscription-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .plan-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .plan-card.featured {
+            border-color: #007bff;
+            transform: scale(1.05);
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff4757;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .plan-card .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .new-price {
+            color: #007bff;
+        }
+
+        .coming-soon {
+            margin-top: 0.5rem;
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-premium {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .btn-premium:hover {
+            background: linear-gradient(45deg, #ffed4e, #ffd700);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 768px) {
             .price-plans {
                 grid-template-columns: 1fr;
             }
 
             .price-card.highlighted {
+                transform: scale(1);
+            }
+
+            .subscription-plans {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-card.featured {
                 transform: scale(1);
             }
         }
@@ -246,48 +371,58 @@
     <main class="container">
         <section class="section">
             <h2>Тарифные планы</h2>
-            <div class="price-plans">
-                <div class="price-card">
-                    <h3>Бесплатный доступ</h3>
-                    <div class="price">0 ₽</div>
+            <div class="subscription-plans">
+                <!-- Free Plan -->
+                <div class="plan-card free-plan">
+                    <h3>🆓 Бесплатный план</h3>
                     <ul class="price-features">
-                        <li>Не более 5 запросов в день</li>
-                        <li>Лимит 30 запросов в месяц</li>
-                        <li>Базовые ответы с цитированием источников</li>
-                        <li>Регулярные обновления базы знаний</li>
+                        <li>• 5 запросов в день</li>
+                        <li>• Лимит 30 запросов в месяц</li>
+                        <li>• Базовые ответы с цитированием источников</li>
+                        <li>• Регулярные обновления базы знаний</li>
                     </ul>
-                    <a href="https://t.me/Pdflyx_bot" class="btn btn-outline" onclick="trackButtonClick('subscription_free_plan')">Начать бесплатно</a>
+                    <div class="price">Бесплатно</div>
+                    <button class="btn btn-secondary" disabled>Текущий план</button>
                 </div>
 
-                <div class="price-card highlighted">
-                    <div class="price-card-badge">Популярный</div>
-                    <h3>Стандартный план</h3>
-                    <div class="price"><span style="text-decoration: line-through; color: #6c757d; font-size: 1.8rem;">1500 ₽</span> 1000 ₽ <small>/месяц</small></div>
+                <!-- Standard Plan -->
+                <div class="plan-card standard-plan featured">
+                    <div class="discount-badge">СКИДКА!</div>
+                    <h3>⭐ Стандартный план</h3>
                     <ul class="price-features">
-                        <li>Неограниченное количество запросов в день</li>
-                        <li>Лимит 200 запросов в месяц</li>
-                        <li>Полный доступ к нормативной базе</li>
-                        <li>Развёрнутые ответы с цитированием источников</li>
-                        <li>Техническая поддержка</li>
-                        <li>Добавление стандартов по запросу</li>
+                        <li>• Неограниченные запросы в день</li>
+                        <li>• 200 запросов в месяц</li>
+                        <li>• Полный доступ к нормативной базе</li>
+                        <li>• Развёрнутые ответы с цитированием источников</li>
+                        <li>• Техническая поддержка</li>
+                        <li>• Добавление стандартов по запросу</li>
                     </ul>
-                    <a href="#" class="btn btn-primary" onclick="trackButtonClick('subscription_standard_plan')">Оформить подписку</a>
+                    <div class="price">
+                        <span class="old-price">1 500 ₽</span>
+                        <span class="new-price">1 000 ₽/месяц</span>
+                    </div>
+                    <button class="btn btn-primary telegram-subscribe" data-plan="standard">
+                        💳 Оформить подписку
+                    </button>
                 </div>
 
-                <div class="price-card">
-                    <h3>Премиум план</h3>
-                    <div class="price">3000 ₽ <small>/месяц</small></div>
-                    <p style="color: #6c757d; font-style: italic; margin: 1rem 0;">Скоро будет доступен</p>
+                <!-- Premium Plan -->
+                <div class="plan-card premium-plan">
+                    <h3>🌟 Премиум план</h3>
                     <ul class="price-features">
-                        <li>Неограниченное количество запросов в день</li>
-                        <li>Лимит 500 запросов в месяц</li>
-                        <li>Полный доступ к нормативной базе</li>
-                        <li>Просмотр стандартов с выделенными цитатами</li>
-                        <li>Приоритетная техническая поддержка</li>
-                        <li>Добавление стандартов по запросу</li>
-                        <li>Расширенная статистика использования</li>
+                        <li>• Неограниченные запросы в день</li>
+                        <li>• 500 запросов в месяц</li>
+                        <li>• Полный доступ к нормативной базе</li>
+                        <li>• Просмотр стандартов с выделенными цитатами</li>
+                        <li>• Приоритетная техническая поддержка</li>
+                        <li>• Добавление стандартов по запросу</li>
+                        <li>• Расширенная статистика использования</li>
                     </ul>
-                    <a href="#" class="btn btn-outline" onclick="trackButtonClick('subscription_premium_plan')" style="opacity: 0.6; cursor: not-allowed;">Пока недоступно</a>
+                    <div class="price">3 000 ₽/месяц</div>
+                    <button class="btn btn-premium telegram-subscribe" data-plan="premium" disabled>
+                        🌟 Скоро будет доступна
+                    </button>
+                    <div class="coming-soon">⚠️ Пока не доступна - скоро будет!</div>
                 </div>
             </div>
         </section>
@@ -321,5 +456,169 @@
             <p><a href="index.html" style="color: white; text-decoration: underline;" onclick="trackButtonClick('subscription_back_to_main')">Вернуться на главную</a></p>
         </div>
     </footer>
+
+    <script>
+        // Telegram Web App Integration
+        class TelegramWebAppIntegration {
+            constructor() {
+                this.tg = window.Telegram?.WebApp;
+                this.init();
+            }
+
+            init() {
+                if (!this.tg) {
+                    console.error('Telegram Web App not available');
+                    this.showFallbackButtons();
+                    return;
+                }
+
+                // Initialize Telegram Web App
+                this.tg.ready();
+                this.tg.expand();
+                
+                // Set up event listeners
+                this.setupEventListeners();
+                
+                // Show Telegram-style UI
+                this.setupTelegramUI();
+
+                console.log('Telegram Web App initialized successfully');
+            }
+
+            setupEventListeners() {
+                // Handle subscription buttons
+                document.querySelectorAll('.telegram-subscribe').forEach(button => {
+                    button.addEventListener('click', (e) => this.handleSubscription(e));
+                });
+            }
+
+            setupTelegramUI() {
+                // Apply Telegram theme if available
+                if (this.tg.themeParams) {
+                    document.documentElement.style.setProperty('--tg-bg-color', this.tg.themeParams.bg_color || '#ffffff');
+                    document.documentElement.style.setProperty('--tg-text-color', this.tg.themeParams.text_color || '#000000');
+                    document.documentElement.style.setProperty('--tg-hint-color', this.tg.themeParams.hint_color || '#999999');
+                    document.documentElement.style.setProperty('--tg-button-color', this.tg.themeParams.button_color || '#007bff');
+                    document.documentElement.style.setProperty('--tg-button-text-color', this.tg.themeParams.button_text_color || '#ffffff');
+                }
+
+                // Set main button for primary action
+                this.tg.MainButton.setText('Выбрать тарифный план');
+                this.tg.MainButton.show();
+            }
+
+            handleSubscription(event) {
+                const button = event.target;
+                const plan = button.dataset.plan;
+
+                if (!plan) {
+                    console.error('No plan specified');
+                    return;
+                }
+
+                // Show loading state
+                button.disabled = true;
+                button.innerHTML = '⏳ Обработка...';
+
+                // Prepare data for Telegram bot
+                const subscriptionData = {
+                    action: 'subscribe',
+                    plan: plan,
+                    timestamp: Date.now(),
+                    user_agent: navigator.userAgent,
+                    url: window.location.href
+                };
+
+                try {
+                    // Send data to Telegram bot
+                    this.tg.sendData(JSON.stringify(subscriptionData));
+                    
+                    // Show success feedback
+                    this.showSuccessMessage(plan);
+                    
+                } catch (error) {
+                    console.error('Error sending data to Telegram:', error);
+                    this.showErrorMessage();
+                    
+                    // Reset button state
+                    button.disabled = false;
+                    this.resetButtonText(button, plan);
+                }
+            }
+
+            showSuccessMessage(plan) {
+                const planNames = {
+                    'standard': 'Стандартный',
+                    'premium': 'Премиум'
+                };
+
+                this.tg.showAlert(
+                    `✅ Запрос на подписку "${planNames[plan] || plan}" отправлен!\n\n` +
+                    'Вы получите ссылку для оплаты в чате с ботом.',
+                    () => {
+                        // Close web app after showing alert
+                        this.tg.close();
+                    }
+                );
+            }
+
+            showErrorMessage() {
+                this.tg.showAlert(
+                    '❌ Произошла ошибка при отправке запроса.\n\n' +
+                    'Пожалуйста, попробуйте снова или обратитесь в поддержку.'
+                );
+            }
+
+            resetButtonText(button, plan) {
+                const originalTexts = {
+                    'standard': '💳 Оформить подписку',
+                    'premium': '🌟 Скоро будет доступна'
+                };
+                
+                button.innerHTML = originalTexts[plan] || '💳 Оформить подписку';
+            }
+
+            showFallbackButtons() {
+                // Show alternative buttons for non-Telegram users
+                console.log('Showing fallback buttons for non-Telegram environment');
+                
+                document.querySelectorAll('.telegram-subscribe').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        alert('Этот сайт работает только в Telegram Web App.\n\nОткройте ссылку через Telegram бота.');
+                    });
+                });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new TelegramWebAppIntegration();
+        });
+
+        // Additional utility functions
+        window.TelegramSubscription = {
+            // Function to manually trigger subscription (if needed)
+            subscribe: function(plan) {
+                const button = document.querySelector(`[data-plan="${plan}"]`);
+                if (button) {
+                    button.click();
+                }
+            },
+
+            // Function to check if running in Telegram
+            isTelegramWebApp: function() {
+                return !!(window.Telegram && window.Telegram.WebApp);
+            },
+
+            // Function to get Telegram user info (if available)
+            getTelegramUser: function() {
+                if (this.isTelegramWebApp()) {
+                    return window.Telegram.WebApp.initDataUnsafe?.user;
+                }
+                return null;
+            }
+        };
+    </script>
 </body>
 </html>
