@@ -382,7 +382,7 @@
                         <li>• Регулярные обновления базы знаний</li>
                     </ul>
                     <div class="price">Бесплатно</div>
-                    <button class="btn btn-secondary" disabled>Текущий план</button>
+                    <a href="https://t.me/Pdflyx_bot" class="btn btn-secondary" target="_blank" onclick="trackButtonClick('subscription_free_plan')">🤖 Перейти к боту</a>
                 </div>
 
                 <!-- Standard Plan -->
@@ -825,11 +825,11 @@
         // Global utility functions
         window.SubscriptionSystem = {
             isTelegramEnvironment: () => !!(window.Telegram?.WebApp),
-            
+
             openTelegramBot: (botUsername = 'Pdflyx_bot') => {
                 window.open(`https://t.me/${botUsername}`, '_blank');
             },
-            
+
             testSubscription: (plan) => {
                 const button = document.querySelector(`[data-plan="${plan}"]`);
                 if (button) {
