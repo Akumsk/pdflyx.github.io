@@ -511,14 +511,33 @@
                 const button = event.target;
                 const plan = button.dataset.plan;
 
+                console.log('🔍 Debug - handleSubscription called with plan:', plan);
+                console.log('🔍 Debug - Telegram Web App available:', !!this.tg);
+
                 if (!plan) {
-                    console.error('No plan specified');
+                    console.error('❌ No plan specified');
+                    alert('Ошибка: план не указан');
+                    return;
+                }
+
+                // Check if Telegram Web App is available
+                if (!this.tg) {
+                    console.error('❌ Telegram Web App not available in handleSubscription');
+                    alert('⚠️ Этот сайт работает только в Telegram Web App.\n\nОткройте ссылку через Telegram бота.');
                     return;
                 }
 
                 // Show loading state
                 button.disabled = true;
                 button.innerHTML = '⏳ Обработка...';
+
+                // Add timeout to reset button if something goes wrong
+                const timeoutId = setTimeout(() => {
+                    console.error('⏰ Subscription timeout - resetting button');
+                    button.disabled = false;
+                    this.resetButtonText(button, plan);
+                    alert('⚠️ Превышено время ожидания. Попробуйте еще раз.');
+                }, 10000); // 10 seconds timeout
 
                 // Prepare data for Telegram bot
                 const subscriptionData = {
@@ -529,16 +548,32 @@
                     url: window.location.href
                 };
 
+                console.log('📤 Sending data to Telegram:', subscriptionData);
+
                 try {
                     // Send data to Telegram bot
                     this.tg.sendData(JSON.stringify(subscriptionData));
+                    
+                    console.log('✅ Data sent successfully to Telegram');
+                    
+                    // Clear timeout since we succeeded
+                    clearTimeout(timeoutId);
                     
                     // Show success feedback
                     this.showSuccessMessage(plan);
                     
                 } catch (error) {
-                    console.error('Error sending data to Telegram:', error);
-                    this.showErrorMessage();
+                    console.error('❌ Error sending data to Telegram:', error);
+                    
+                    // Clear timeout
+                    clearTimeout(timeoutId);
+                    
+                    // Show error with fallback
+                    if (this.tg && this.tg.showAlert) {
+                        this.showErrorMessage();
+                    } else {
+                        alert('❌ Произошла ошибка при отправке запроса.\n\nПопробуйте снова или обратитесь в поддержку.');
+                    }
                     
                     // Reset button state
                     button.disabled = false;
@@ -619,6 +654,13 @@
                 return null;
             }
         };
+
+        // Reset the stuck button
+        const button = document.querySelector('[data-plan="standard"]');
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '💳 Оформить подписку';
+        }
     </script>
 </body>
 </html>
