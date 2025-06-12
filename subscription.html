@@ -837,6 +837,24 @@
                 }
             }
         };
+
+        // Quick fix for stuck buttons
+        console.log('🔧 Resetting all subscription buttons...');
+
+        document.querySelectorAll('.telegram-subscribe').forEach(button => {
+            button.disabled = false;
+            
+            const plan = button.dataset.plan;
+            if (plan === 'standard') {
+                button.innerHTML = '💳 Оформить подписку';
+            } else if (plan === 'premium') {
+                button.innerHTML = '🌟 Скоро будет доступна';
+            }
+            
+            console.log('✅ Reset button for plan:', plan);
+        });
+
+        console.log('🔧 All buttons reset!');
     </script>
 </body>
 </html>
