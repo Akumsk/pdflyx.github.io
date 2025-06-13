@@ -92,12 +92,32 @@
             position: absolute;
             top: 0;
             right: 0;
-            background: var(--secondary);
+            background: linear-gradient(45deg, #ff4757, #ff3742);
             color: white;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-bottom-left-radius: 10px;
+            padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-bottom-left-radius: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            animation: pulse 2s infinite;
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            }
         }
 
         .price-card.highlighted {
@@ -423,11 +443,11 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h3>Оформление подписки</h3>
-            <p>Пожалуйста, воспользуйтесь формой оплаты через Telegram бота. Для этого введите команду:</p>
+            <p>Для оплаты подписки перейдите в Telegram бот и выберите опцию:</p>
             <div class="command-box">
                 /subscription
             </div>
-            <p>После ввода команды следуйте инструкциям бота для оплаты подписки.</p>
+            <p>Следуйте инструкциям бота для завершения оплаты.</p>
             <a href="#" class="btn btn-primary" onclick="proceedToBot()">Перейти к боту</a>
         </div>
     </div>
