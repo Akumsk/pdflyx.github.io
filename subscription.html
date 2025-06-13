@@ -442,12 +442,14 @@
     <div id="subscriptionModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Оформление подписки</h3>
-            <p>Для оплаты подписки перейдите в Telegram бот и выберите опцию:</p>
-            <div class="command-box">
-                /subscription
-            </div>
-            <p>Следуйте инструкциям бота для завершения оплаты.</p>
+            <h3>Отлично! Давайте оформим вашу подписку.</h3>
+            <p>Это займет всего пару минут:</p>
+            <ol style="text-align: left; margin: 1.5rem 0; padding-left: 1.5rem;">
+                <li style="margin-bottom: 0.5rem;">Перейдите в наш Telegram-бот</li>
+                <li style="margin-bottom: 0.5rem;">Введите команду <span style="background: var(--light); padding: 0.2rem 0.5rem; border-radius: 3px; font-family: 'Courier New', monospace; font-weight: bold;">/subscription</span></li>
+                <li style="margin-bottom: 0.5rem;">Следуйте инструкциям для оплаты</li>
+                <li style="margin-bottom: 0.5rem; color: var(--secondary); font-weight: 600;">Готово! Наслаждайтесь всеми возможностями сервиса.</li>
+            </ol>
             <a href="#" class="btn btn-primary" onclick="proceedToBot()">Перейти к боту</a>
         </div>
     </div>
