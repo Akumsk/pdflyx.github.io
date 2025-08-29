@@ -443,59 +443,33 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Анимация появления элементов
             const fadeElements = document.querySelectorAll('.fade-in');
-
             function checkFade() {
                 fadeElements.forEach(element => {
                     const elementTop = element.getBoundingClientRect().top;
                     const viewportHeight = window.innerHeight;
-
                     if (elementTop < viewportHeight - 100) {
                         element.classList.add('visible');
                     }
                 });
             }
-
-            // Проверка при загрузке страницы
             checkFade();
-
-            // Проверка при прокрутке
             window.addEventListener('scroll', checkFade);
 
             // Поиск по стандартам
             const searchInput = document.getElementById('searchInput');
-
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
-
-                // Поиск по строкам таблицы
                 const tables = document.querySelectorAll('.standards-table');
-
                 tables.forEach(table => {
                     const rows = table.querySelectorAll('tbody tr');
                     let hasVisibleRows = false;
-
                     rows.forEach(row => {
-                        const nameCell = row.querySelector('td:first-child');
-                        const numberCell = row.querySelector('td:nth-child(2)');
-                        const revisionCell = row.querySelector('td:nth-child(3)');
-                        const dateCell = row.querySelector('td:nth-child(4)');
-                        const statusCell = row.querySelector('td:nth-child(5)');
-
-                        // Получаем текст из всех ячеек для поиска
-                        const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                        const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
-                        const revisionText = revisionCell ? revisionCell.textContent.toLowerCase() : '';
-                        const dateText = dateCell ? dateCell.textContent.toLowerCase() : '';
-                        const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
-
-                        // Объединяем текст для поиска по всем полям
-                        const rowText = `${nameText} ${numberText} ${revisionText} ${dateText} ${statusText}`;
-
-                        // Проверяем, содержит ли какое-либо поле поисковый запрос
+                        const rowText = row.textContent.toLowerCase();
                         if (rowText.includes(searchTerm)) {
                             row.style.display = '';
                             hasVisibleRows = true;
@@ -503,40 +477,30 @@
                             row.style.display = 'none';
                         }
                     });
-
-                    // Показываем или скрываем таблицу в зависимости от наличия видимых строк
                     table.style.display = hasVisibleRows ? '' : 'none';
                 });
-
                 // Показываем/скрываем заголовки категорий
                 const categoryHeaders = document.querySelectorAll('.category-header');
                 categoryHeaders.forEach(header => {
-                    // Категория и следующая за ней таблица
                     const nextTable = header.nextElementSibling;
                     if (nextTable && nextTable.classList.contains('standards-table')) {
-                        // Показываем заголовок категории только если таблица видима
                         header.style.display = nextTable.style.display === 'none' ? 'none' : '';
                     }
                 });
-
-                // Показываем сообщение, если ничего не найдено
+                // Сообщение если ничего не найдено
                 const allTablesHidden = Array.from(tables).every(table => table.style.display === 'none');
-                const noResultsMessage = document.getElementById('no-results-message');
-
+                let noResultsMessage = document.getElementById('no-results-message');
                 if (allTablesHidden && searchTerm !== '') {
-                    // Создаем сообщение, если его еще нет
                     if (!noResultsMessage) {
-                        const message = document.createElement('p');
-                        message.id = 'no-results-message';
-                        message.textContent = 'По вашему запросу ничего не найдено';
-                        message.style.textAlign = 'center';
-                        message.style.padding = '20px';
-                        message.style.color = '#666';
-
-                        // Вставляем сообщение после поля поиска
+                        noResultsMessage = document.createElement('p');
+                        noResultsMessage.id = 'no-results-message';
+                        noResultsMessage.textContent = 'По вашему запросу ничего не найдено';
+                        noResultsMessage.style.textAlign = 'center';
+                        noResultsMessage.style.padding = '20px';
+                        noResultsMessage.style.color = '#666';
                         const searchContainer = document.querySelector('.search-container');
                         if (searchContainer) {
-                            searchContainer.parentNode.insertBefore(message, searchContainer.nextSibling);
+                            searchContainer.parentNode.insertBefore(noResultsMessage, searchContainer.nextSibling);
                         }
                     } else {
                         noResultsMessage.style.display = '';
@@ -544,297 +508,143 @@
                 } else if (noResultsMessage) {
                     noResultsMessage.style.display = 'none';
                 }
-
-                // Обновляем счетчик всего количества видимых документов
                 updateTotalCount();
             });
 
-            // Функция для обновления общего счетчика
             function updateTotalCount() {
                 const totalCountElement = document.getElementById('totalCount');
                 const visibleRows = document.querySelectorAll('.standards-table tbody tr:not([style*="display: none"])');
-
                 totalCountElement.textContent = `Всего найдено: ${visibleRows.length} документов`;
             }
 
-            // Запускаем загрузку стандартов при загрузке страницы
-            loadStandards();
+            // Загрузка стандартов из CSV
+            loadStandardsFromCSVs();
 
-            // Функция загрузки списка стандартов
-            function loadStandards() {
+            function loadStandardsFromCSVs() {
                 const standardsList = document.getElementById('standardsList');
                 standardsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i><p>Загрузка списка нормативов...</p></div>';
-
-                // Используем GitHub API для получения списка файлов в директории metadata
-                fetch('https://api.github.com/repos/Akumsk/russian-construction-standards/contents/metadata')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Не удалось получить список файлов из репозитория');
-                        }
-                        return response.json();
-                    })
-                    .then(files => {
-                        // Создаем объект для категорий стандартов
-                        const standardsCategories = {
-                            'Своды правил': [],
-                            'Постановления и Федеральные законы': [],
-                            'ГОСТы': [],
-                            'СанПин': [],
-                            'Прочее': []
-                        };
-
-                        // Обрабатываем только JSON файлы
-                        const jsonFiles = files.filter(file => file.name.endsWith('.json'));
-
-                        // Используем Promise.all для загрузки всех файлов
-                        return Promise.all(
-                            jsonFiles.map(file =>
-                                fetch(file.download_url)
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error(`Не удалось загрузить файл ${file.name}`);
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        // Определяем категорию на основе имени файла или содержимого
-                                        const categoryName = getCategoryFromFileName(file.name);
-
-                                        // Извлекаем только необходимые поля
-                                        if (typeof data === 'object' && data !== null) {
-                                            // Если данные - это единичный документ
-                                            if (data.full_name) {
-                                                const standardName = data.full_name;
-                                                const status = data.status || '';
-                                                const number = data.number || '';
-                                                const revision = data.revision || '';
-                                                const date = data.date_issue || '';
-
-                                                standardsCategories[categoryName].push({
-                                                    name: standardName,
-                                                    status: status,
-                                                    number: number,
-                                                    revision: revision,
-                                                    date: date
-                                                });
-                                            }
-                                            // Если данные содержат массив или объект с документами
-                                            else if (Array.isArray(data)) {
-                                                data.forEach(standard => {
-                                                    if (standard.full_name) {
-                                                        const standardName = standard.full_name;
-                                                        const status = standard.status || '';
-                                                        const number = standard.number || '';
-                                                        const revision = standard.revision || '';
-                                                        const date = standard.date_issue || '';
-
-                                                        standardsCategories[categoryName].push({
-                                                            name: standardName,
-                                                            status: status,
-                                                            number: number,
-                                                            revision: revision,
-                                                            date: date
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                            // Если данные в другом формате (объект с вложенными объектами)
-                                            else {
-                                                Object.keys(data).forEach(key => {
-                                                    const item = data[key];
-                                                    if (typeof item === 'object' && item !== null) {
-                                                        if (item.full_name) {
-                                                            const standardName = item.full_name;
-                                                            const status = item.status || '';
-                                                            const number = item.number || '';
-                                                            const revision = item.revision || '';
-                                                            const date = item.date_issue || '';
-
-                                                            standardsCategories[categoryName].push({
-                                                                name: standardName,
-                                                                status: status,
-                                                                number: number,
-                                                                revision: revision,
-                                                                date: date
-                                                            });
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    })
-                            )
-                        ).then(() => standardsCategories);
-                    })
-                    .then(standardsCategories => {
-                        // Очищаем содержимое
-                        standardsList.innerHTML = '';
-
-                        // Проверяем, есть ли данные
-                        if (Object.keys(standardsCategories).length === 0) {
-                            standardsList.innerHTML = '<p>Не удалось загрузить список стандартов.</p>';
-                            return;
-                        }
-
-                        // Подсчитываем общее количество документов
-                        let totalDocuments = 0;
-                        for (const category in standardsCategories) {
-                            totalDocuments += standardsCategories[category].length;
-                        }
-
-                        // Отображаем общее количество
-                        const totalCountElement = document.getElementById('totalCount');
-                        totalCountElement.textContent = `Всего найдено: ${totalDocuments} документов`;
-
-                        // Заданный порядок категорий
-                        const categoryOrder = [
-                            'Своды правил',
-                            'Постановления и Федеральные законы',
-                            'ГОСТы',
-                            'СанПин',
-                            'Прочее'
-                        ];
-
-                        // Создаем список по категориям в заданном порядке
-                        categoryOrder.forEach(category => {
-                            if (!standardsCategories[category] || standardsCategories[category].length === 0) return;
-
-                            // Создаем заголовок категории с количеством документов
-                            const categoryHeader = document.createElement('div');
-                            categoryHeader.className = 'category-header';
-
-                            const categoryHeading = document.createElement('h3');
-                            categoryHeading.textContent = category;
-                            categoryHeader.appendChild(categoryHeading);
-
-                            const categoryCount = document.createElement('span');
-                            categoryCount.className = 'category-count';
-                            categoryCount.textContent = `${standardsCategories[category].length} документов`;
-                            categoryHeader.appendChild(categoryCount);
-
-                            standardsList.appendChild(categoryHeader);
-
-                            // Создаем таблицу
-                            const table = document.createElement('table');
-                            table.className = 'standards-table';
-
-                            // Добавляем заголовок таблицы
-                            const thead = document.createElement('thead');
-                            const headerRow = document.createElement('tr');
-
-                            const nameHeader = document.createElement('th');
-                            nameHeader.textContent = 'Название';
-                            nameHeader.style.width = '40%';
-
-                            const numberHeader = document.createElement('th');
-                            numberHeader.textContent = 'Номер';
-                            numberHeader.style.width = '15%';
-
-                            const revisionHeader = document.createElement('th');
-                            revisionHeader.textContent = 'Версия/Изменение';
-                            revisionHeader.style.width = '15%';
-
-                            const dateHeader = document.createElement('th');
-                            dateHeader.textContent = 'Дата';
-                            dateHeader.style.width = '15%';
-
-                            const statusHeader = document.createElement('th');
-                            statusHeader.textContent = 'Статус';
-                            statusHeader.style.width = '15%';
-
-                            headerRow.appendChild(nameHeader);
-                            headerRow.appendChild(numberHeader);
-                            headerRow.appendChild(revisionHeader);
-                            headerRow.appendChild(dateHeader);
-                            headerRow.appendChild(statusHeader);
-                            thead.appendChild(headerRow);
-                            table.appendChild(thead);
-
-                            // Создаем тело таблицы
-                            const tbody = document.createElement('tbody');
-
-                            standardsCategories[category].forEach(standard => {
-                                const row = document.createElement('tr');
-
-                                // Ячейка с названием
-                                const nameCell = document.createElement('td');
-                                const icon = document.createElement('i');
-                                icon.className = 'fas fa-file-pdf document-icon';
-                                icon.style.marginRight = '8px';
-                                icon.style.color = '#0077cc';
-                                nameCell.appendChild(icon);
-                                nameCell.appendChild(document.createTextNode(standard.name));
-
-                                // Ячейка с номером
-                                const numberCell = document.createElement('td');
-                                numberCell.className = 'standard-number';
-                                numberCell.textContent = standard.number || '';
-
-                                // Ячейка с версией/изменением
-                                const revisionCell = document.createElement('td');
-                                revisionCell.textContent = standard.revision || '';
-
-                                // Ячейка с датой
-                                const dateCell = document.createElement('td');
-                                dateCell.textContent = standard.date || '';
-
-                                // Ячейка со статусом
-                                const statusCell = document.createElement('td');
-                                const statusSpan = document.createElement('span');
-                                statusSpan.className = 'standard-status';
-
-                                if (standard.status) {
-                                    // Устанавливаем класс в зависимости от статуса
-                                    if (standard.status.toLowerCase().includes('действ')) {
-                                        statusSpan.classList.add('status-active');
-                                    } else if (standard.status.toLowerCase().includes('отмен') ||
-                                              standard.status.toLowerCase().includes('не действ')) {
-                                        statusSpan.classList.add('status-inactive');
-                                    } else {
-                                        statusSpan.classList.add('status-other');
-                                    }
-
-                                    statusSpan.textContent = standard.status;
-                                    statusCell.appendChild(statusSpan);
-                                }
-
-                                row.appendChild(nameCell);
-                                row.appendChild(numberCell);
-                                row.appendChild(revisionCell);
-                                row.appendChild(dateCell);
-                                row.appendChild(statusCell);
-
-                                tbody.appendChild(row);
-                            });
-
-                            table.appendChild(tbody);
-                            standardsList.appendChild(table);
+                const csvFiles = [
+                    '/pdflyx-knowledge/knowledge_base/russian_regulations/complete_metadata1.csv',
+                    '/pdflyx-knowledge/knowledge_base/russian_regulations/complete_metadata2.csv',
+                    '/pdflyx-knowledge/knowledge_base/russian_regulations/complete_metadata3.csv',
+                    '/pdflyx-knowledge/knowledge_base/russian_regulations/complete_metadata4.csv'
+                ];
+                let allRows = [];
+                let loaded = 0;
+                csvFiles.forEach(file => {
+                    fetch(file)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Ошибка загрузки ' + file);
+                            return response.text();
+                        })
+                        .then(csvText => {
+                            const parsed = Papa.parse(csvText, {header: true, skipEmptyLines: true});
+                            allRows = allRows.concat(parsed.data);
+                        })
+                        .catch(err => {
+                            console.error('Ошибка при загрузке CSV:', err);
+                        })
+                        .finally(() => {
+                            loaded++;
+                            if (loaded === csvFiles.length) {
+                                renderStandardsTable(allRows);
+                            }
                         });
-                    })
-                    .catch(error => {
-                        console.error('Ошибка при загрузке данных:', error);
-                        standardsList.innerHTML = `<p>Ошибка загрузки данных: ${error.message}</p>`;
-                    });
+                });
             }
 
-            // Функция для определения категории на основе имени файла
-            function getCategoryFromFileName(fileName) {
-                // Удаляем расширение
-                const name = fileName.replace('.json', '').toLowerCase();
-
-                // Определяем категорию на основе имени файла
-                if (name.includes('sp') || name.includes('свод')) {
-                    return 'Своды правил';
-                } else if (name.includes('fz') || name.includes('постановление') ||
-                          name.includes('regulation') || name.includes('закон')) {
-                    return 'Постановления и Федеральные законы';
-                } else if (name.includes('gost') || name.includes('гост')) {
-                    return 'ГОСТы';
-                } else if (name.includes('snip') || name.includes('снип')) {
-                    return 'СанПин';
-                } else {
-                    return 'Прочее';
+            function renderStandardsTable(rows) {
+                const standardsList = document.getElementById('standardsList');
+                standardsList.innerHTML = '';
+                if (!rows.length) {
+                    standardsList.innerHTML = '<p>Не удалось загрузить список стандартов.</p>';
+                    return;
                 }
+                // Группировка по категориям
+                const categories = {};
+                rows.forEach(row => {
+                    const cat = row.category && row.category.trim() ? row.category.trim() : 'Прочее';
+                    if (!categories[cat]) categories[cat] = [];
+                    categories[cat].push(row);
+                });
+                // Порядок категорий
+                const categoryOrder = Object.keys(categories);
+                let totalDocuments = 0;
+                categoryOrder.forEach(category => {
+                    if (!categories[category].length) return;
+                    // Заголовок категории
+                    const categoryHeader = document.createElement('div');
+                    categoryHeader.className = 'category-header';
+                    const categoryHeading = document.createElement('h3');
+                    categoryHeading.textContent = category;
+                    categoryHeader.appendChild(categoryHeading);
+                    const categoryCount = document.createElement('span');
+                    categoryCount.className = 'category-count';
+                    categoryCount.textContent = `${categories[category].length} документов`;
+                    categoryHeader.appendChild(categoryCount);
+                    standardsList.appendChild(categoryHeader);
+                    // Таблица
+                    const table = document.createElement('table');
+                    table.className = 'standards-table';
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    ['Название','Номер','Версия/Изменение','Дата','Статус'].forEach(text => {
+                        const th = document.createElement('th');
+                        th.textContent = text;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+                    const tbody = document.createElement('tbody');
+                    categories[category].forEach(standard => {
+                        const row = document.createElement('tr');
+                        // Название
+                        const nameCell = document.createElement('td');
+                        const icon = document.createElement('i');
+                        icon.className = 'fas fa-file-pdf document-icon';
+                        icon.style.marginRight = '8px';
+                        icon.style.color = '#0077cc';
+                        nameCell.appendChild(icon);
+                        nameCell.appendChild(document.createTextNode(standard.full_name || standard.filename || '—'));
+                        // Номер
+                        const numberCell = document.createElement('td');
+                        numberCell.className = 'standard-number';
+                        numberCell.textContent = standard.number || '';
+                        // Версия/Изменение
+                        const revisionCell = document.createElement('td');
+                        revisionCell.textContent = standard.revision || '';
+                        // Дата
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = standard.date_issue || '';
+                        // Статус
+                        const statusCell = document.createElement('td');
+                        const statusSpan = document.createElement('span');
+                        statusSpan.className = 'standard-status';
+                        if (standard.status) {
+                            if (standard.status.toLowerCase().includes('действ')) {
+                                statusSpan.classList.add('status-active');
+                            } else if (standard.status.toLowerCase().includes('отмен') || standard.status.toLowerCase().includes('не действ')) {
+                                statusSpan.classList.add('status-inactive');
+                            } else {
+                                statusSpan.classList.add('status-other');
+                            }
+                            statusSpan.textContent = standard.status;
+                            statusCell.appendChild(statusSpan);
+                        }
+                        row.appendChild(nameCell);
+                        row.appendChild(numberCell);
+                        row.appendChild(revisionCell);
+                        row.appendChild(dateCell);
+                        row.appendChild(statusCell);
+                        tbody.appendChild(row);
+                        totalDocuments++;
+                    });
+                    table.appendChild(tbody);
+                    standardsList.appendChild(table);
+                });
+                // Обновить общий счётчик
+                const totalCountElement = document.getElementById('totalCount');
+                totalCountElement.textContent = `Всего найдено: ${totalDocuments} документов`;
             }
         });
     </script>
