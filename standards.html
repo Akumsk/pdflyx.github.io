@@ -644,7 +644,17 @@
                                 icon.style.marginRight = '8px';
                                 icon.style.color = '#0077cc';
                                 nameCell.appendChild(icon);
-                        nameCell.appendChild(document.createTextNode(standard.full_name || standard.filename || '—'));
+                        let displayName = '';
+                        if (standard.source) {
+                            displayName = standard.source.replace(/\.pdf$/i, '');
+                        } else if (standard.full_name) {
+                            displayName = standard.full_name;
+                        } else if (standard.filename) {
+                            displayName = standard.filename.replace(/\.pdf$/i, '');
+                        } else {
+                            displayName = '—';
+                        }
+                        nameCell.appendChild(document.createTextNode(displayName));
                         // Версия/Изменение
                                 const revisionCell = document.createElement('td');
                         revisionCell.style.width = '5cm';
