@@ -560,88 +560,51 @@
                     standardsList.innerHTML = '<p>Не удалось загрузить список стандартов.</p>';
                     return;
                 }
-                // Группировка по категориям
-                const categories = {};
-                rows.forEach(row => {
-                    const cat = row.category && row.category.trim() ? row.category.trim() : 'Прочее';
-                    if (!categories[cat]) categories[cat] = [];
-                    categories[cat].push(row);
-                });
-                // Порядок категорий
-                const categoryOrder = Object.keys(categories);
+                // Одна таблица без группировки
                 let totalDocuments = 0;
-                categoryOrder.forEach(category => {
-                    if (!categories[category].length) return;
-                    // Заголовок категории
-                    const categoryHeader = document.createElement('div');
-                    categoryHeader.className = 'category-header';
-                    const categoryHeading = document.createElement('h3');
-                    categoryHeading.textContent = category;
-                    categoryHeader.appendChild(categoryHeading);
-                    const categoryCount = document.createElement('span');
-                    categoryCount.className = 'category-count';
-                    categoryCount.textContent = `${categories[category].length} документов`;
-                    categoryHeader.appendChild(categoryCount);
-                    standardsList.appendChild(categoryHeader);
-                    // Таблица
-                    const table = document.createElement('table');
-                    table.className = 'standards-table';
-                    const thead = document.createElement('thead');
-                    const headerRow = document.createElement('tr');
-                    ['Название','Номер','Версия/Изменение','Дата','Статус'].forEach(text => {
-                        const th = document.createElement('th');
-                        th.textContent = text;
-                        headerRow.appendChild(th);
-                    });
-                    thead.appendChild(headerRow);
-                    table.appendChild(thead);
-                    const tbody = document.createElement('tbody');
-                    categories[category].forEach(standard => {
-                        const row = document.createElement('tr');
-                        // Название
-                        const nameCell = document.createElement('td');
-                        const icon = document.createElement('i');
-                        icon.className = 'fas fa-file-pdf document-icon';
-                        icon.style.marginRight = '8px';
-                        icon.style.color = '#0077cc';
-                        nameCell.appendChild(icon);
-                        nameCell.appendChild(document.createTextNode(standard.full_name || standard.filename || '—'));
-                        // Номер
-                        const numberCell = document.createElement('td');
-                        numberCell.className = 'standard-number';
-                        numberCell.textContent = standard.number || '';
-                        // Версия/Изменение
-                        const revisionCell = document.createElement('td');
-                        revisionCell.textContent = standard.revision || '';
-                        // Дата
-                        const dateCell = document.createElement('td');
-                        dateCell.textContent = standard.date_issue || '';
-                        // Статус
-                        const statusCell = document.createElement('td');
-                        const statusSpan = document.createElement('span');
-                        statusSpan.className = 'standard-status';
-                        if (standard.status) {
-                            if (standard.status.toLowerCase().includes('действ')) {
-                                statusSpan.classList.add('status-active');
-                            } else if (standard.status.toLowerCase().includes('отмен') || standard.status.toLowerCase().includes('не действ')) {
-                                statusSpan.classList.add('status-inactive');
-                            } else {
-                                statusSpan.classList.add('status-other');
-                            }
-                            statusSpan.textContent = standard.status;
-                            statusCell.appendChild(statusSpan);
-                        }
-                        row.appendChild(nameCell);
-                        row.appendChild(numberCell);
-                        row.appendChild(revisionCell);
-                        row.appendChild(dateCell);
-                        row.appendChild(statusCell);
-                        tbody.appendChild(row);
-                        totalDocuments++;
-                    });
-                    table.appendChild(tbody);
-                    standardsList.appendChild(table);
+                const table = document.createElement('table');
+                table.className = 'standards-table';
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                // Новый порядок: Номер, Название, Версия, Дата
+                ['Номер','Название','Версия/Изменение','Дата'].forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    headerRow.appendChild(th);
                 });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                const tbody = document.createElement('tbody');
+                rows.forEach(standard => {
+                    const row = document.createElement('tr');
+                    // Номер
+                    const numberCell = document.createElement('td');
+                    numberCell.className = 'standard-number';
+                    numberCell.textContent = standard.number || '';
+                    // Название
+                    const nameCell = document.createElement('td');
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-file-pdf document-icon';
+                    icon.style.marginRight = '8px';
+                    icon.style.color = '#0077cc';
+                    nameCell.appendChild(icon);
+                    nameCell.appendChild(document.createTextNode(standard.full_name || standard.filename || '—'));
+                    // Версия/Изменение
+                    const revisionCell = document.createElement('td');
+                    revisionCell.textContent = standard.revision || '';
+                    // Дата
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = standard.date_issue || '';
+                    // Добавляем в строку
+                    row.appendChild(numberCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(revisionCell);
+                    row.appendChild(dateCell);
+                    tbody.appendChild(row);
+                    totalDocuments++;
+                });
+                table.appendChild(tbody);
+                standardsList.appendChild(table);
                 // Обновить общий счётчик
                 const totalCountElement = document.getElementById('totalCount');
                 totalCountElement.textContent = `Всего найдено: ${totalDocuments} документов`;
