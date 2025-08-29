@@ -572,18 +572,31 @@
                     if (type.includes('гост')) {
                         groups['ГОСТ, ГОСТ Р'].push(row);
                     } else if (type.includes('свод') || type.includes('сп')) {
-                        groups['Своды правил'].push(row);
-                    } else if (type.includes('постановление') || type.includes('приказ') || type.includes('фз') || type.includes('федеральный закон')) {
+                        // Исключаем 'распоряжение' из этой группы
+                        if (!type.includes('распоряжение')) {
+                            groups['Своды правил'].push(row);
+                            return;
+                        }
+                    }
+                    if (type.includes('постановление') || type.includes('приказ') || type.includes('фз') || type.includes('федеральный закон') || type.includes('распоряжение')) {
                         groups['Постановления, Приказы, ФЗ'].push(row);
-                    } else {
+                    } else if (!type.includes('гост') && !type.includes('свод') && !type.includes('сп')) {
                         groups['Другое'].push(row);
                     }
                 });
                 const groupOrder = ['ГОСТ, ГОСТ Р', 'Своды правил', 'Постановления, Приказы, ФЗ', 'Другое'];
                         let totalDocuments = 0;
                 groupOrder.forEach(groupName => {
-                    const groupRows = groups[groupName];
+                    let groupRows = groups[groupName];
                     if (!groupRows.length) return;
+                    // Сортировка по номеру
+                    groupRows = groupRows.slice().sort((a, b) => {
+                        const na = (a.number || '').toLowerCase();
+                        const nb = (b.number || '').toLowerCase();
+                        if (na < nb) return -1;
+                        if (na > nb) return 1;
+                        return 0;
+                    });
                     // Заголовок группы
                             const categoryHeader = document.createElement('div');
                             categoryHeader.className = 'category-header';
